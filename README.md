@@ -1,18 +1,15 @@
 # Projeto de Sistemas Distribuídos 2015-2016 #
 
-Grupo de SD ... - Campus ...
-*(preencher com número do grupo de SD no Fénix e depois apagar esta linha)*
+## Grupo de SD 65 - Campus Alameda
 
-... ... ...
-
-... ... ...
-
-... ... ...
-*(preencher com nome, número e email de membro do grupo e depois apagar esta linha)*
-
+| Aluno               | Número IST | Email                       |             
+|---------------------|------------|-----------------------------|
+| André Silva         |	68707      | andrefpvs@netcabo.pt        |
+| Duarte Coelho       | 73339      | *(preencher)*               |
+| João Afonso Martins | 73438      | *(preencher)*               |
 
 Repositório:
-[tecnico-distsys/C_XX-project](https://github.com/tecnico-distsys/C_XX-project/)
+[tecnico-distsys/A_65-project](https://github.com/tecnico-distsys/A_65-project/)
 
 -------------------------------------------------------------------------------
 
