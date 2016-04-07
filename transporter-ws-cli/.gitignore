@@ -1,0 +1,6 @@
+/target/
+
+# IDE (e.g. Eclipse) Files #
+.classpath
+.settings
+.project
