@@ -5,8 +5,8 @@
 | Aluno               | Número IST | Email                       |             
 |---------------------|------------|-----------------------------|
 | André Silva         |	68707      | andrefpvs@netcabo.pt        |
-| Duarte Coelho       | 73339      | *(preencher)*               |
-| João Afonso Martins | 73438      | *(preencher)*               |
+| Duarte Coelho       | 73339      | coelho.106@hotmail.com      |
+| João Afonso Martins | 73438      | martins.joao.a@gmail.com    |
 
 Repositório:
 [tecnico-distsys/A_65-project](https://github.com/tecnico-distsys/A_65-project/)
