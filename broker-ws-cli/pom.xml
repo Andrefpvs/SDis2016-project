@@ -4,7 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <!-- http://maven.apache.org/pom.html#Quick_Overview -->
 
-    <groupId>pt.upa.a65</groupId>
+    <!-- Please replace 'cxx' below with 
+        your c (campus) with a (Alameda) / t (Tagus); and 
+        your group number with two digits.
+        Then delete this comment. -->
+    <groupId>pt.upa.cxx</groupId>
     <artifactId>broker-ws-cli</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -28,6 +32,14 @@
     </properties>
 
     <dependencies>
+		  
+        <!-- UDDI Naming -->
+        <dependency>
+            <groupId>pt.ulisboa.tecnico.sdis</groupId>
+            <artifactId>uddi-naming</artifactId>
+            <version>1.0</version>
+        </dependency>
+    
         <!-- JAX-WS -->
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
@@ -118,6 +130,8 @@
                     <killAfter>-1</killAfter>
                     <mainClass>${mainclass}</mainClass>
                     <arguments>
+                        <argument>${uddi.url}</argument>
+                        <argument>${ws.name}</argument>
                         <argument>${ws.url}</argument>
                     </arguments>
                 </configuration>
