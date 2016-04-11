@@ -3,6 +3,10 @@ package pt.upa.transporter.ws;
 import java.util.List;
 import javax.jws.WebService;
 
+import pt.upa.transporter.*;
+
+
+
 @WebService(
 	    endpointInterface="pt.upa.transporter.ws.TransporterPortType",
 	    wsdlLocation="transporter.1_0.wsdl",
@@ -13,10 +17,22 @@ import javax.jws.WebService;
 )
 
 public class TransporterPort implements TransporterPortType {
+	
+	// endpoint
+	private TransporterEndpointManager endpoint;
+
+	public TransporterPort(TransporterEndpointManager endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	TransporterPort() {
+	}
+	
+	// TransporterPortType implementation
 
 	@Override
 	public String ping(String name) {
-		return "Hello, " + name + ". UpaTransporter is ready.";
+		return "Hello, " + name + ". " + endpoint.getWsName() + " is ready.";
 	}
 
 	@Override
