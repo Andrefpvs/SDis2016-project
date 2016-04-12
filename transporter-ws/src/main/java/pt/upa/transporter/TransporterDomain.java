@@ -31,13 +31,26 @@ public class TransporterDomain {
 	}
 	
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
-		// TODO Implement
-		return null;
+		JobView job = jobs.get(Integer.parseInt(id));
+		if (job == null) throw new BadJobFault_Exception("Invalid job index", new BadJobFault());
+		
+		if(accept && (job.getJobState() == JobStateView.PROPOSED)) {
+			job.setJobState(JobStateView.ACCEPTED);
+			
+		} else if(!accept && (job.getJobState() == JobStateView.PROPOSED)) {
+			job.setJobState(JobStateView.REJECTED);
+			
+		} else throw new BadJobFault_Exception("Job not in PROPOSED state", new BadJobFault());
+		
+		jobs.put(Integer.parseInt(id), job);		
+		return job;
 	}
 	
 	public JobView jobStatus(String id) {
-		// TODO Implement
-		return null;
+		JobView job = jobs.get(Integer.parseInt(id));
+		if (job == null) return null;
+		
+		return job;
 	}
 
 	public List<JobView> listJobs() {
