@@ -24,7 +24,7 @@ public class TransporterEndpointManager {
 	private String wsURL = null;
 
 	/** Port implementation */
-	private TransporterPort portImpl = new TransporterPort(this);
+	private TransporterPort portImpl;
 
 	/** Obtain Port implementation */
 	public TransporterPortType getPort() {
@@ -57,9 +57,10 @@ public class TransporterEndpointManager {
 		this.uddiURL = uddiURL;
 		this.wsName = wsName;
 		this.wsURL = wsURL;
+		this.portImpl = new TransporterPort(this);
 	}
 
-	/** constructor with provided web service URL */
+	/** constructor with provided web service URL */	
 	public TransporterEndpointManager(String wsURL) {
 		if (wsURL == null)
 			throw new NullPointerException("Web Service URL cannot be null!");

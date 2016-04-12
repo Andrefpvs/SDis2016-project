@@ -34,7 +34,7 @@ public class TransporterDomain {
 	
 	
 	public String ping(String name) {
-		return "Hello, " + name + ". " + wsname + " is ready.";
+		return "Hello, " + name + ". " + wsname + " is ready!";
 	}
 	
 	public JobView requestJob(String origin, String destination, int price)
