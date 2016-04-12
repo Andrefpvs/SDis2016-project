@@ -16,9 +16,9 @@ import pt.upa.transporter.ws.*;
 public class TransporterDomain {
 	
 	private TreeMap<String, JobView> jobs; //String = Job ID
-	private String wsname;
+	private String wsname; //Transporter Name
 	private int transporterId; // Transporter ID
-	private int jobNumber = 1;
+	private int jobNumber = 1; // Number attributed to next created job
 	private ArrayList<String> norte = new ArrayList<String>(); //"norte" region cities
 	private ArrayList<String> centro = new ArrayList<String>(); //"centro" region cities
 	private ArrayList<String> sul = new ArrayList<String>(); //"sul" region cities
@@ -108,7 +108,7 @@ public class TransporterDomain {
 	}
 	
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
-		JobView job = jobs.get(Integer.parseInt(id));
+		JobView job = jobs.get(id);
 		if (job == null) throw new BadJobFault_Exception("Invalid job index", new BadJobFault());
 		
 		if(accept && (job.getJobState() == JobStateView.PROPOSED)) {
@@ -119,12 +119,12 @@ public class TransporterDomain {
 			
 		} else throw new BadJobFault_Exception("Job not in PROPOSED state", new BadJobFault());
 		
-		jobs.put(id, job);		
+		jobs.put(id, job);
 		return job;
 	}
 	
 	public JobView jobStatus(String id) {
-		JobView job = jobs.get(Integer.parseInt(id));
+		JobView job = jobs.get(id);
 		if (job == null) return null;
 		
 		return job;
