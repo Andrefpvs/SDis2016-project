@@ -15,6 +15,9 @@ import pt.upa.transporter.ws.*;
  */
 public class TransporterDomain {
 	
+ 	private static final String MESSAGE_TO_UNKNOWNS = "Who is this?";
+
+	
 	private TreeMap<String, JobView> jobs; //String = Job ID
 	private String wsname; //Transporter Name
 	private int transporterId; // Transporter ID
@@ -34,7 +37,9 @@ public class TransporterDomain {
 	
 	
 	public String ping(String name) {
-		return "Hello, " + name + ". " + wsname + " is ready!";
+        if (name == null || name.length() == 0) {
+        	return MESSAGE_TO_UNKNOWNS;
+        } else return "Hello, " + name + ". " + wsname + " is ready!";
 	}
 	
 	public JobView requestJob(String origin, String destination, int price)

@@ -23,12 +23,13 @@ public class TransporterPort implements TransporterPortType {
 
 	public TransporterPort(TransporterEndpointManager endpoint) {
 		this.endpoint = endpoint;
-		this.domain = new TransporterDomain(endpoint.getWsName());
+		this.domain = new TransporterDomain(this.endpoint.getWsName());
 	}
 
-	/*TransporterPort() {
-		this.domain = new TransporterDomain("UpaTransporter");
-	}*/
+	// constructor used for Unit Testing
+	TransporterPort(String serviceName) {
+		this.domain = new TransporterDomain(serviceName);
+	}
 	
 	/*
 	 *  TransporterPortType implementation
