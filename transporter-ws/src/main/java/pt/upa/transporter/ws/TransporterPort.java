@@ -1,11 +1,12 @@
 package pt.upa.transporter.ws;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.jws.WebService;
 
 import pt.upa.transporter.*;
-
-
 
 @WebService(
 	    endpointInterface="pt.upa.transporter.ws.TransporterPortType",
@@ -23,12 +24,25 @@ public class TransporterPort implements TransporterPortType {
 
 	public TransporterPort(TransporterEndpointManager endpoint) {
 		this.endpoint = endpoint;
+		this.jobs = new TreeMap<Integer, JobView>();
 	}
 
 	TransporterPort() {
+		this.jobs = new TreeMap<Integer, JobView>();
 	}
 	
-	// TransporterPortType implementation
+	/* 
+	 * 
+	 * Transporter Service objects and implementation starts here
+	 * 
+	 */
+	
+	private TreeMap<Integer, JobView> jobs; //Integer = job id
+
+	
+	/*
+	 *  TransporterPortType implementation
+	 */
 
 	@Override
 	public String ping(String name) {
@@ -56,14 +70,16 @@ public class TransporterPort implements TransporterPortType {
 
 	@Override
 	public List<JobView> listJobs() {
-		// TODO Auto-generated method stub
-		return null;
+		List<JobView> jobList = new ArrayList<JobView>();
+		for(Map.Entry<Integer, JobView> job : jobs.entrySet()){
+			jobList.add(job.getValue());
+		}
+		return jobList;
 	}
 
 	@Override
 	public void clearJobs() {
-		// TODO Auto-generated method stub
-		
+		jobs.clear();	
 	}
 
 }

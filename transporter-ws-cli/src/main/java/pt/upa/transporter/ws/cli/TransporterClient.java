@@ -18,14 +18,6 @@ import pt.upa.transporter.ws.TransporterService;
 
 public class TransporterClient implements TransporterPortType {
 	
-	/* public TransporterClient(String uddiurl, String wsname) {
-	
-		 ver nos exemplos
-		 ir ao uddi, obter o endereço, ter o stub
-		 // DELETE COMMENT BEFORE DELIVERY
-		
-	}  */
-
 	/** WS service */
 	TransporterService service = null;
 
@@ -100,7 +92,9 @@ public class TransporterClient implements TransporterPortType {
 		if (verbose)
 			System.out.println("Creating stub...");
 		service = new TransporterService();
-		port = service.getTransporterPort();
+		port = service.getTransporterPort(); //our stub!
+											 //after a "mvn install", we'll want to
+											 //reuse it for our broker
 
 		if (wsURL != null) {
 			if (verbose)
@@ -112,8 +106,9 @@ public class TransporterClient implements TransporterPortType {
 	}
 	
 	
-	
-	// TransporterPortType methods
+	/*
+	 *  TransporterPortType methods
+	 */
 	
 	@Override
 	public String ping(String name) {

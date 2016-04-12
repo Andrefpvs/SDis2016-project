@@ -26,7 +26,10 @@ public class TransporterClientApplication {
 			wsName = args[1]; // ex.: mvn -Dws.i=2 exec:java (look for UpaTransporter2)
 		}
 
-		// Create client
+		/** Create client
+		 *  This object will then be reused in the Broker
+		 *  whenever we want to "talk" with the client
+		 */
 		TransporterClient client = null;
 
 		if (wsURL != null) {
