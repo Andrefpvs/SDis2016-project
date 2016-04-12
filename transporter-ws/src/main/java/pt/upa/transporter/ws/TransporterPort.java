@@ -1,9 +1,6 @@
 package pt.upa.transporter.ws;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import javax.jws.WebService;
 
 import pt.upa.transporter.*;
@@ -19,26 +16,19 @@ import pt.upa.transporter.*;
 
 public class TransporterPort implements TransporterPortType {
 	
+	TransporterDomain domain;
+	
 	// endpoint
 	private TransporterEndpointManager endpoint;
 
 	public TransporterPort(TransporterEndpointManager endpoint) {
 		this.endpoint = endpoint;
-		this.jobs = new TreeMap<Integer, JobView>();
+		this.domain = new TransporterDomain();
 	}
 
 	TransporterPort() {
-		this.jobs = new TreeMap<Integer, JobView>();
+		this.domain = new TransporterDomain();
 	}
-	
-	/* 
-	 * 
-	 * Transporter Service objects and implementation starts here
-	 * 
-	 */
-	
-	private TreeMap<Integer, JobView> jobs; //Integer = job id
-
 	
 	/*
 	 *  TransporterPortType implementation
@@ -46,40 +36,33 @@ public class TransporterPort implements TransporterPortType {
 
 	@Override
 	public String ping(String name) {
-		return "Hello, " + name + ". " + endpoint.getWsName() + " is ready.";
+		return domain.ping(name, endpoint.getWsName());
 	}
 
 	@Override
 	public JobView requestJob(String origin, String destination, int price)
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return domain.requestJob(origin, destination, price);
 	}
 
 	@Override
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return domain.decideJob(id, accept);
 	}
 
 	@Override
 	public JobView jobStatus(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		return domain.jobStatus(id);
 	}
 
 	@Override
 	public List<JobView> listJobs() {
-		List<JobView> jobList = new ArrayList<JobView>();
-		for(Map.Entry<Integer, JobView> job : jobs.entrySet()){
-			jobList.add(job.getValue());
-		}
-		return jobList;
+		return domain.listJobs();
 	}
 
 	@Override
 	public void clearJobs() {
-		jobs.clear();	
+		domain.clearJobs();	
 	}
 
 }
