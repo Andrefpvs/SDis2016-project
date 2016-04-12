@@ -23,12 +23,12 @@ public class TransporterPort implements TransporterPortType {
 
 	public TransporterPort(TransporterEndpointManager endpoint) {
 		this.endpoint = endpoint;
-		this.domain = new TransporterDomain();
+		this.domain = new TransporterDomain(endpoint.getWsName());
 	}
 
-	TransporterPort() {
-		this.domain = new TransporterDomain();
-	}
+	/*TransporterPort() {
+		this.domain = new TransporterDomain("UpaTransporter");
+	}*/
 	
 	/*
 	 *  TransporterPortType implementation
@@ -36,7 +36,7 @@ public class TransporterPort implements TransporterPortType {
 
 	@Override
 	public String ping(String name) {
-		return domain.ping(name, endpoint.getWsName());
+		return domain.ping(name);
 	}
 
 	@Override
