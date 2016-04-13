@@ -116,15 +116,23 @@ public class TransporterDomain {
 	
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
 		JobView job = jobs.get(id);
+		boolean accepted = false;
 		if (job == null) throw new BadJobFault_Exception("Invalid job index", new BadJobFault());
 		
 		if(accept && (job.getJobState() == JobStateView.PROPOSED)) {
 			job.setJobState(JobStateView.ACCEPTED);
+			accepted = true;
 			
 		} else if(!accept && (job.getJobState() == JobStateView.PROPOSED)) {
 			job.setJobState(JobStateView.REJECTED);
 			
 		} else throw new BadJobFault_Exception("Job not in PROPOSED state", new BadJobFault());
+		
+		if(accepted) {
+			int timeToNextState = ThreadLocalRandom.current().nextInt(1000, 5000 + 1);
+			TransporterUpdateReminder reminder = 
+					new TransporterUpdateReminder(timeToNextState, job.getJobIdentifier(), this);
+		}
 		
 		jobs.put(id, job);
 		return job;
@@ -197,5 +205,34 @@ public class TransporterDomain {
 	
 	public int getNextJobNumber() {
 		return this.jobNumber;
+	}
+	
+	public void updateJobState(String jobIdentifier) {
+		JobView job = jobs.get(jobIdentifier);
+		if (job.getJobState() == JobStateView.ACCEPTED) {
+			job.setJobState(JobStateView.HEADING);
+		} else if (job.getJobState() == JobStateView.HEADING) {
+			job.setJobState(JobStateView.ONGOING);
+		} else if (job.getJobState() == JobStateView.ONGOING) {
+			job.setJobState(JobStateView.COMPLETED);
+		}
+		
+		if (job.getJobState() != JobStateView.COMPLETED) {
+			int timeToNextState = ThreadLocalRandom.current().nextInt(1000, 5000 + 1);
+			TransporterUpdateReminder reminder = 
+					new TransporterUpdateReminder(timeToNextState, job.getJobIdentifier(), this);
+		}
+		
+	}
+	
+	public String jobStateToString(JobStateView state) {
+		if (state == JobStateView.PROPOSED) return "PROPOSED";
+		if (state == JobStateView.REJECTED) return "REJECTED";
+		if (state == JobStateView.ACCEPTED) return "ACCEPTED";
+		if (state == JobStateView.HEADING) return "HEADING";
+		if (state == JobStateView.ONGOING) return "ONGOING";
+		if (state == JobStateView.COMPLETED) return "COMPLETED";
+		
+		return "UNKNOWN STATE";
 	}
 }
