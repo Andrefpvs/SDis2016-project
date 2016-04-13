@@ -87,7 +87,7 @@ public class TransporterPortTest {
     }
     
     /**
-     * Test that requesting a job for an unexisting origin location
+     * Test that requesting a job for a non-existing origin location
      * triggers an exception
      */
     @Test(expected = BadLocationFault_Exception.class)
@@ -97,7 +97,7 @@ public class TransporterPortTest {
     }
     
     /**
-     * Test that requesting a job for an unexisting destination location
+     * Test that requesting a job for a non-existing destination location
      * triggers an exception
      */
     @Test(expected = BadLocationFault_Exception.class)
