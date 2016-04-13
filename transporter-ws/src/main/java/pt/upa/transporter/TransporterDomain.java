@@ -48,7 +48,7 @@ public class TransporterDomain {
 			throw new BadLocationFault_Exception("Origin location unknown", new BadLocationFault());
 		}
 		if (!norte.contains(destination) && !centro.contains(destination) && !sul.contains(destination)) {
-			throw new BadLocationFault_Exception("This transporter does " + "not serve that destination region",
+			throw new BadLocationFault_Exception("Destination location unknown",
 					new BadLocationFault());
 		}
 		if (price < 0)
@@ -61,9 +61,10 @@ public class TransporterDomain {
 					|| (!norte.contains(destination) && !centro.contains(destination))) {
 				return null;
 			}
-		} else if ((!sul.contains(origin) && !centro.contains(origin))
-				|| (!sul.contains(destination) && !centro.contains(destination))) {
-			return null;
+		} else //If odd...
+			if ((!sul.contains(origin) && !centro.contains(origin)) 
+					|| (!sul.contains(destination) && !centro.contains(destination))) {
+				return null;
 		}
 
 		if (price > 100)
@@ -73,16 +74,17 @@ public class TransporterDomain {
 		 * Decide price based on parameters
 		 */
 		
-		int offerPrice = 0;
-		if (price <= 10) {
-			offerPrice = ThreadLocalRandom.current().nextInt(0, price + 1);
+		int offerPrice = 0; //if reference price == 0 or 1, this is maintained
+		
+		if (price > 1 && price <= 10) {
+			offerPrice = ThreadLocalRandom.current().nextInt(0, price);
 		}
 		
 		if (price > 10) {
-			if( ((this.transporterId % 2) == 0 && (price % 2) == 0)
+			if (((this.transporterId % 2) == 0 && (price % 2) == 0)
 					|| ((this.transporterId % 2) == 1 && (price % 2) == 1)) {
-				offerPrice = ThreadLocalRandom.current().nextInt(0, price + 1);
-			} else offerPrice = ThreadLocalRandom.current().nextInt(price, 100 + 1);
+				offerPrice = ThreadLocalRandom.current().nextInt(0, price);
+			} else offerPrice = ThreadLocalRandom.current().nextInt(price + 1, 100 + 1);
 		}
 		
 		/*
@@ -191,5 +193,9 @@ public class TransporterDomain {
 		this.norte = norteList;
 		this.centro = centroList;
 		this.sul = sulList;
+	}
+	
+	public int getNextJobNumber() {
+		return this.jobNumber;
 	}
 }
