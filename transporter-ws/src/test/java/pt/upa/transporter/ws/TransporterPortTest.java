@@ -1,5 +1,6 @@
 package pt.upa.transporter.ws;
 
+import java.util.List;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -259,6 +260,114 @@ public class TransporterPortTest {
     	assertEquals("Leiria", storedJob.getJobDestination());
     	assertEquals(JobStateView.PROPOSED, storedJob.getJobState());    	
     }
-    
-    // TODO Tests for "decideJob", "jobStatus", "listJobs", "clearJobs"
+
+    /**
+     * Test that the transporter doesn't decide on jobs that have an invalid Id
+     */
+    @Test(expected = BadJobFault_Exception.class)
+    public void testDecideJobWithInvalidId() throws Exception {
+    	localPort = new TransporterPort("UpaTransporter1");
+	JobView job1 = localPort.requestJob("Leiria", "Lisboa", 40);
+    	JobView job2 = localPort.decideJob("T10I4", true);
+    	    	
+    }
+
+    /**
+     * Test that the transporter correctly accepts jobs
+     */
+    @Test
+    public void testDecideJobAccept() throws Exception {
+    	localPort = new TransporterPort("UpaTransporter1");
+	JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
+    	JobView job2 = localPort.decideJob("T1I1", true);
+	assertEquals(JobStateView.ACCEPTED, job2.getJobState());
+    	    	
+    }
+
+    /**
+     * Test that the transporter correctly rejects jobs
+     */
+    @Test
+    public void testDecideJobReject() throws Exception {
+    	localPort = new TransporterPort("UpaTransporter1");
+	JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
+    	JobView job2 = localPort.decideJob("T1I1", false);
+	assertEquals(JobStateView.REJECTED, job2.getJobState());
+    	    	
+    }
+
+    /**
+     * Test that the transporter doesn't decide on jobs not in PROPOSED state
+     */
+    @Test(expected = BadJobFault_Exception.class)
+    public void testDecideJobIncorrectState() throws Exception {
+    	localPort = new TransporterPort("UpaTransporter1");
+	JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
+    	JobView job2 = localPort.decideJob("T1I1", true);
+	assertEquals(JobStateView.ACCEPTED, job2.getJobState());
+	JobView job3 = localPort.decideJob("T1I1", true);
+    	    	
+    }
+
+    /**
+     * Test if jobStatus method correctly returns an existing job
+     */
+    @Test
+    public void testJobStatusExistingJob() throws Exception {
+    	localPort = new TransporterPort("UpaTransporter1");
+	JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
+    	JobView job2 = localPort.jobStatus("T1I1");
+	assertEquals("UpaTransporter1", job2.getCompanyName());
+    	assertEquals("T1I1", job2.getJobIdentifier());
+    	assertEquals("Leiria", job2.getJobOrigin());
+    	assertEquals("Lisboa", job2.getJobDestination());
+    	assertEquals(JobStateView.PROPOSED, job2.getJobState());
+    	    	
+    }
+
+    /**
+     * Test if jobStatus method correctly returns null for an unexisting job
+     */
+    @Test
+    public void testJobStatusUnexistingJob() throws Exception {
+    	localPort = new TransporterPort("UpaTransporter1");
+	JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
+    	JobView job2 = localPort.jobStatus("T1I3");
+	assertNull(job2);
+    	    	
+    }
+
+    /**
+     * Test if listJobs method correctly lists the jobs contained in the TreeMap of jobs
+     */
+    @Test
+    public void testListJobs() throws Exception {
+    	localPort = new TransporterPort("UpaTransporter1");
+	JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
+    	JobView job2 = localPort.requestJob("Lisboa", "Leiria", 60);
+	JobView job3 = localPort.requestJob("Leiria", "Lisboa", 40);
+	List<JobView> joblist = localPort.listJobs();
+	assertEquals(joblist.get(0), job1);
+	assertEquals(joblist.get(1), job2);
+	assertEquals(joblist.get(2), job3);
+	
+    	    	
+    }
+
+
+    /**
+     * Test if clearJobs method correctly empties the TreeMap of jobs
+     */
+    @Test
+    public void testClearJobs() throws Exception {
+    	localPort = new TransporterPort("UpaTransporter1");
+	JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
+    	JobView job2 = localPort.requestJob("Lisboa", "Leiria", 60);
+	JobView job3 = localPort.requestJob("Leiria", "Lisboa", 40);
+	localPort.clearJobs();
+	assertEquals(true, localPort.listJobs().isEmpty());
+	assertEquals(0, localPort.listJobs().size());
+	   	    	
+    }
+
 }
