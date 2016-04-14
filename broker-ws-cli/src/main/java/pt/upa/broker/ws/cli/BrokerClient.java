@@ -121,7 +121,7 @@ public class BrokerClient implements BrokerPortType{
 	public String requestTransport(String origin, String destination, int price)
 			throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception,
 			UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception {
-		return requestTransport(origin, destination, price);
+		return port.requestTransport(origin, destination, price);
 	}
 
 	@Override

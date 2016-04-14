@@ -1,10 +1,16 @@
 package pt.upa.broker;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.TreeMap;
+
+import javax.xml.registry.JAXRException;
+
 import java.util.List;
 
+import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.upa.broker.ws.*;
+import pt.upa.transporter.ws.cli.TransporterClient;
 
 /*
  * 
@@ -17,21 +23,41 @@ public class BrokerDomain {
 		
 	
 	private TreeMap<String, TransportView> transports; //String = Transport ID
+	private ArrayList<TransporterClient> transporters;
 	private String wsname; //Broker Name
 	private ArrayList<String> cities = new ArrayList<String>(); //All regions cities
+	private UDDINaming uddiNaming = null;
 
 	
-	public BrokerDomain(String wsname) {
+	public BrokerDomain(String wsname, String uddiURL) throws JAXRException {
 		this.transports = new TreeMap<String, TransportView>();
+		this.transporters = new ArrayList<TransporterClient>();
 		this.wsname = wsname;
+		this.uddiNaming = new UDDINaming(uddiURL);
 		initialiseCities();
 	}
 	
-	public String ping(String name) {
-        //TODO call ping on all transporters
+	public String ping(String name) {        
+		String response = "";
+		
 		if (name == null || name.length() == 0) {
         	return MESSAGE_TO_UNKNOWNS;
-        } else return "Hello, " + name + ". " + wsname + " is ready!";
+        } 
+		response += "Hello, " + name + ". " + wsname + " is ready! "
+				+ "Here's what the Transporters I know about have to say:\n";
+		
+		updateTransporters();
+		
+		if (transporters.isEmpty()){
+			return "Hello, " + name + ". " + wsname + " is ready! I can't "
+					+ "find any Transporters right now...";
+		}
+		
+		for (TransporterClient client : transporters) {
+			response += ("  \"" + client.ping(this.wsname) + "\"\n");
+		}
+				
+		return response;
 	}
 	
 	public String requestTransport(String origin, String destination, int price)
@@ -56,7 +82,11 @@ public class BrokerDomain {
 		
 	}
 
-	
+	/*
+	 * 
+	 * Implementation of Domain auxiliary functions
+	 *
+	 */
 	
 	public void initialiseCities() {
 		ArrayList<String> cityList = new ArrayList<String>();
@@ -84,6 +114,30 @@ public class BrokerDomain {
 		cityList.add("Guarda");
 
 		this.cities = cityList;
+	}
+	
+	public void updateTransporters() {
+		Collection<String> endpoints = null;
+		ArrayList<TransporterClient> updatedTransporters = new ArrayList<TransporterClient>();
+		try {
+			endpoints = uddiNaming.list("UpaTransporter%");
+		} catch (JAXRException e) {
+			this.transporters.clear();
+			endpoints = null;
+		}
+		
+		if(endpoints == null) {
+			this.transporters.clear();
+			return;
+		}
+		
+		if (!endpoints.isEmpty()) {
+			for (String endpoint : endpoints) {			
+				TransporterClient tc = new TransporterClient(endpoint);
+				updatedTransporters.add(tc);
+			}			
+			this.transporters = updatedTransporters;
+		} else this.transporters.clear();		
 	}
 
 }

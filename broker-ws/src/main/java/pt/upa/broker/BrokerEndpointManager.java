@@ -2,6 +2,7 @@ package pt.upa.broker;
 
 import java.io.IOException;
 
+import javax.xml.registry.JAXRException;
 import javax.xml.ws.Endpoint;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
@@ -12,6 +13,12 @@ public class BrokerEndpointManager {
 
 	/** UDDI naming server location */
 	private String uddiURL = null;
+	
+	/** Get UDDI URL */
+	public String getUddiURL() {
+		return uddiURL;
+	}
+	
 	/** Web Service name */
 	private String wsName = null;
 
@@ -52,8 +59,9 @@ public class BrokerEndpointManager {
 		this.verbose = verbose;
 	}
 
-	/** constructor with provided UDDI location, WS name, and WS URL */
-	public BrokerEndpointManager(String uddiURL, String wsName, String wsURL) {
+	/** constructor with provided UDDI location, WS name, and WS URL 
+	 * @throws JAXRException */
+	public BrokerEndpointManager(String uddiURL, String wsName, String wsURL) throws JAXRException {
 		this.uddiURL = uddiURL;
 		this.wsName = wsName;
 		this.wsURL = wsURL;

@@ -2,6 +2,7 @@ package pt.upa.broker.ws;
 
 import java.util.List;
 import javax.jws.WebService;
+import javax.xml.registry.JAXRException;
 
 import pt.upa.broker.*;
 
@@ -21,9 +22,9 @@ public class BrokerPort implements BrokerPortType {
 	//endpoint
 	private BrokerEndpointManager endpoint;	
 
-	public BrokerPort(BrokerEndpointManager endpoint) {
+	public BrokerPort(BrokerEndpointManager endpoint) throws JAXRException {
 		this.endpoint = endpoint;
-		this.domain = new BrokerDomain(this.endpoint.getWsName());
+		this.domain = new BrokerDomain(this.endpoint.getWsName(), this.endpoint.getUddiURL());
 	}
 	
 	
