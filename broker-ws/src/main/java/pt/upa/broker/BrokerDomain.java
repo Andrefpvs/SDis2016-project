@@ -7,9 +7,15 @@ import java.util.TreeMap;
 import javax.xml.registry.JAXRException;
 
 import java.util.List;
+import java.util.Map;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.upa.broker.ws.*;
+import pt.upa.transporter.ws.BadJobFault_Exception;
+import pt.upa.transporter.ws.BadLocationFault_Exception;
+import pt.upa.transporter.ws.BadPriceFault_Exception;
+import pt.upa.transporter.ws.JobStateView;
+import pt.upa.transporter.ws.JobView;
 import pt.upa.transporter.ws.cli.TransporterClient;
 
 /*
@@ -25,6 +31,7 @@ public class BrokerDomain {
 	private TreeMap<String, TransportView> transports; //String = Transport ID
 	private ArrayList<TransporterClient> transporters;
 	private String wsname; //Broker Name
+	private int failedNumber = 1; // Number attributed to transporter in FAILED state
 	private ArrayList<String> cities = new ArrayList<String>(); //All regions cities
 	private UDDINaming uddiNaming = null;
 
@@ -63,23 +70,152 @@ public class BrokerDomain {
 	public String requestTransport(String origin, String destination, int price)
 			throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception,
 			UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception {
-		// TODO Actually implement the method
-		return "Here's your transport";
+
+		if (!cities.contains(origin)) {
+			throw new UnknownLocationFault_Exception("Origin location unknown", new UnknownLocationFault());
+		}
+		if (!cities.contains(destination)) {
+			throw new UnknownLocationFault_Exception("Destination location unknown", new UnknownLocationFault());
+		}
+		
+		if (price < 0) {
+			throw new InvalidPriceFault_Exception("Your price is negative...", new InvalidPriceFault());
+		}
+		
+		if (price > 100) {
+			throw new UnavailableTransportPriceFault_Exception("No transports exist for "
+					+ "that price", new UnavailableTransportPriceFault());
+		}
+		
+		updateTransporters();
+		
+		/*
+		 * Build TransportView
+		 */
+		
+		TransportView transport = new TransportView();
+		transport.setOrigin(origin);
+		transport.setDestination(destination);
+		transport.setState(TransportStateView.REQUESTED);
+		
+		ArrayList<JobView> jobOffers = new ArrayList<JobView>();
+		TreeMap<Integer, JobView> sortedJobOffers = new TreeMap<Integer, JobView>();
+
+		for(TransporterClient client : transporters) {
+			try {
+				JobView jobOffer = client.requestJob(origin, destination, price);
+				if (jobOffer != null) {
+					jobOffers.add(jobOffer);
+					sortedJobOffers.put(jobOffer.getJobPrice(), jobOffer);
+				}
+			} catch (BadLocationFault_Exception | BadPriceFault_Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (jobOffers.isEmpty()) { //if we had no offers
+			throw new UnavailableTransportFault_Exception("No transports exist for "
+					+ "those locations" , new UnavailableTransportFault());
+		} else {
+			transport.setState(TransportStateView.BUDGETED);
+			JobView bestJob = sortedJobOffers.get(sortedJobOffers.firstKey());
+			if (! (bestJob.getJobPrice() < price)) {
+				transport.setState(TransportStateView.FAILED);
+			} else {
+				transport.setId(bestJob.getJobIdentifier());
+				transport.setPrice(bestJob.getJobPrice());
+				transport.setTransporterCompany(bestJob.getCompanyName());
+				
+				JobView decidedJob = null;
+				
+				for(JobView jobOffer : jobOffers) {
+					for(TransporterClient client : transporters) {
+						if (client.listJobs().contains(jobOffer)) {
+							if (jobOffer.equals(bestJob)) {
+								try {
+									decidedJob = client.decideJob(transport.getId(), true);
+								} catch (BadJobFault_Exception e) {
+									e.printStackTrace();
+								}
+							} else {
+								try {
+									client.decideJob(transport.getId(), false);
+								} catch (BadJobFault_Exception e) {
+									e.printStackTrace();
+								}
+							}
+								
+						}
+					}
+				}
+				
+				if (decidedJob.getJobState() == JobStateView.ACCEPTED) {
+					transport.setState(TransportStateView.BOOKED);
+				} else if (decidedJob.getJobState() == JobStateView.REJECTED) {
+					transport.setState(TransportStateView.FAILED);
+				}
+			}
+			
+			
+		}		
+		
+		/*
+		 * Special Identifier format for FAILED Transports:
+		 * TF + failedNumber
+		 * Ex: TF3 (for the third failed transport)
+		 */
+		if (transport.getState() == TransportStateView.FAILED) {
+			transport.setId("TF" + this.failedNumber);
+			this.failedNumber = this.failedNumber + 1;
+		}
+		
+		transports.put(transport.getId(), transport);
+		
+		
+		return transport.getId();
 	}
 	
 	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
-		// TODO Auto-generated method stub
-		return null;
+		TransportView transport = transports.get(id);
+		
+		if (transport == null) {
+			throw new UnknownTransportFault_Exception("Unexisting transport ID", new UnknownTransportFault());
+		}
+		
+		updateTransporters();
+		for(TransporterClient client : transporters) {
+			if (client.jobStatus(id) != null) {
+				if (client.jobStatus(id).getJobState() == JobStateView.HEADING) {
+					transport.setState(TransportStateView.HEADING);
+				} else if (client.jobStatus(id).getJobState() == JobStateView.ONGOING) {
+					transport.setState(TransportStateView.ONGOING);
+				} else if (client.jobStatus(id).getJobState() == JobStateView.COMPLETED) {
+					transport.setState(TransportStateView.COMPLETED);
+				}
+				
+			}
+		}
+
+		transports.put(id, transport);
+		
+		return transport;
 	}
 	
 	public List<TransportView> listTransports() {
-		// TODO Auto-generated method stub
-		return null;
+		List<TransportView> transportList = new ArrayList<TransportView>();
+		for(Map.Entry<String, TransportView> job : transports.entrySet()){
+			transportList.add(job.getValue());
+		}
+		return transportList;
 	}
 	
 	public void clearTransports() {
-		// TODO Auto-generated method stub
-		
+		transports.clear();
+		this.failedNumber = 1;
+		updateTransporters();
+		for(TransporterClient client : transporters) {
+			client.clearJobs();
+		}		
 	}
 
 	/*

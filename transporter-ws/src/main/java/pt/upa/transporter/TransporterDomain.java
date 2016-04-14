@@ -154,7 +154,8 @@ public class TransporterDomain {
 	}
 	
 	public void clearJobs() {
-		jobs.clear();	
+		jobs.clear();
+		this.jobNumber = 1;
 	}
 	
 	/*
