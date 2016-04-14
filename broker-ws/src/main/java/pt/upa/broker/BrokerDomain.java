@@ -135,7 +135,7 @@ public class BrokerDomain {
 				
 				for(JobView jobOffer : jobOffers) {
 					for(TransporterClient client : transporters) {
-						if (client.jobStatus(jobOffer.getJobIdentifier()) != null/*client.listJobs().contains(jobOffer)*/) { //O MALVADO ESTAVA AQUI
+						if (client.jobStatus(jobOffer.getJobIdentifier()) != null) {
 							if (jobOffer.equals(bestJob)) {
 								try {
 									decidedJob = client.decideJob(jobOffer.getJobIdentifier(), true);
