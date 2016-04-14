@@ -1,13 +1,5 @@
 package pt.upa.broker;
 
-import javax.xml.ws.BindingProvider;
-import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
-
-import java.util.Map;
-
-import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
-import pt.upa.broker.ws.BrokerPortType;
-import pt.upa.broker.ws.BrokerService;
 import pt.upa.broker.ws.cli.*;
 
 public class BrokerClientApplication {
@@ -49,6 +41,7 @@ public class BrokerClientApplication {
 		System.out.print("Pinging...\n");
 		String pingResult = client.ping("BrokerClientApplication");
 		System.out.println(pingResult);
+		System.out.println(client.requestTransport("Lisboa", "Leiria", 50));
 
 	}
 
