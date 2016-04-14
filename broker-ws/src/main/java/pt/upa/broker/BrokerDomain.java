@@ -138,13 +138,13 @@ public class BrokerDomain {
 						if (client.jobStatus(jobOffer.getJobIdentifier()) != null/*client.listJobs().contains(jobOffer)*/) { //O MALVADO ESTAVA AQUI
 							if (jobOffer.equals(bestJob)) {
 								try {
-									decidedJob = client.decideJob(transport.getId(), true);
+									decidedJob = client.decideJob(jobOffer.getJobIdentifier(), true);
 								} catch (BadJobFault_Exception e) {
 									e.printStackTrace();
 								}
 							} else {
 								try {
-									client.decideJob(transport.getId(), false);
+									client.decideJob(jobOffer.getJobIdentifier(), false);
 								} catch (BadJobFault_Exception e) {
 									e.printStackTrace();
 								}
@@ -203,6 +203,7 @@ public class BrokerDomain {
 		}
 
 		transports.put(id, transport);
+		
 		
 		return transport;
 	}
@@ -281,5 +282,5 @@ public class BrokerDomain {
 			this.transporters = updatedTransporters;
 		} else this.transporters.clear();		
 	}
-
+	
 }

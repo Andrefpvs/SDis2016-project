@@ -1,6 +1,7 @@
 package pt.upa.broker;
 
 import pt.upa.broker.ws.cli.*;
+import java.lang.*;
 
 public class BrokerClientApplication {
 
@@ -42,6 +43,8 @@ public class BrokerClientApplication {
 		String pingResult = client.ping("BrokerClientApplication");
 		System.out.println(pingResult);
 		System.out.println(client.requestTransport("Lisboa", "Leiria", 50));
+		
+		
 
 	}
 
