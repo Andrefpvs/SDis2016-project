@@ -33,33 +33,29 @@ public class BrokerPort implements BrokerPortType {
 
 	@Override
 	public String ping(String name) {
-		// TODO Actually implement the method
-		return "Hello " + name;
+		return domain.ping(name);
 	}
 
 	@Override
 	public String requestTransport(String origin, String destination, int price)
 			throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception,
 			UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception {
-		// TODO Actually implement the method
-		return "Here's your transport";
+		return domain.requestTransport(origin, destination, price);
 	}
 
 	@Override
 	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return domain.viewTransport(id);
 	}
 
 	@Override
 	public List<TransportView> listTransports() {
-		// TODO Auto-generated method stub
-		return null;
+		return domain.listTransports();
 	}
 
 	@Override
 	public void clearTransports() {
-		// TODO Auto-generated method stub
+		domain.clearTransports();
 		
 	}
 	
