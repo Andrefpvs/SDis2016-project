@@ -119,7 +119,7 @@ public class BrokerDomain {
 		} else {
 			transport.setState(TransportStateView.BUDGETED);
 			JobView bestJob = sortedJobOffers.get(sortedJobOffers.firstKey());
-			if (! (bestJob.getJobPrice() < price)) {
+			if (!(bestJob.getJobPrice() < price)) {
 				transport.setState(TransportStateView.FAILED);
 			} else {
 				transport.setId(bestJob.getJobIdentifier());
@@ -130,7 +130,7 @@ public class BrokerDomain {
 				
 				for(JobView jobOffer : jobOffers) {
 					for(TransporterClient client : transporters) {
-						if (client.listJobs().contains(jobOffer)) {
+						if (client.jobStatus(jobOffer.getJobIdentifier()) != null/*client.listJobs().contains(jobOffer)*/) { //O MALVADO ESTAVA AQUI
 							if (jobOffer.equals(bestJob)) {
 								try {
 									decidedJob = client.decideJob(transport.getId(), true);
