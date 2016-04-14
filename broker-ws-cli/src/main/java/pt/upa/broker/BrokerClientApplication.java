@@ -15,44 +15,40 @@ public class BrokerClientApplication {
 	public static void main(String[] args) throws Exception {
 		System.out.println(BrokerClientApplication.class.getSimpleName() + " starting...");
 		
-		if (args.length < 2) {
+		if (args.length == 0) {
 			System.err.println("Argument(s) missing!");
-			System.err.printf("Usage: java %s uddiURL name%n", BrokerClient.class.getName());
+			System.err.println("Usage: java " + BrokerClientApplication.class.getName() + " wsURL OR uddiURL wsName");
 			return;
 		}
-
-		String uddiURL = args[0];
-		String name = args[1];
-
-		System.out.printf("Contacting UDDI at %s%n", uddiURL);
-		UDDINaming uddiNaming = new UDDINaming(uddiURL);
-
-		System.out.printf("Looking for '%s'%n", name);
-		String endpointAddress = uddiNaming.lookup(name);
-
-		if (endpointAddress == null) {
-			System.out.println("Not found!");
-			return;
-		} else {
-			System.out.printf("Found %s%n", endpointAddress);
+		String uddiURL = null;
+		String wsName = null;
+		String wsURL = null;
+		if (args.length == 1) {
+			wsURL = args[0];
+		} else if (args.length >= 2) {
+			uddiURL = args[0];
+			wsName = args[1];
 		}
 
-		System.out.println("Creating stub ...");
-		BrokerService service = new BrokerService();
-		BrokerPortType port = service.getBrokerPort();
+		/** 
+		 *  Create client
+		 *  This object will then talk with
+		 *  Transporter clients
+		 */
+		BrokerClient client = null;
 
-		System.out.println("Setting endpoint address ...");
-		BindingProvider bindingProvider = (BindingProvider) port;
-		Map<String, Object> requestContext = bindingProvider.getRequestContext();
-		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
-
-		try {
-			String result = port.ping("friend");
-			System.out.println(result);
-
-		} catch (Exception pfe) {
-			System.out.println("Caught: " + pfe);
+		if (wsURL != null) {
+			System.out.printf("Creating client for server at %s%n", wsURL);
+			client = new BrokerClient(wsURL);
+		} else if (uddiURL != null) {
+			System.out.printf("Creating client using UDDI at %s for server with name %s%n", uddiURL, wsName);
+			client = new BrokerClient(uddiURL, wsName);
 		}
+
+		// Test remote invocation with ping method (does not replace Unit testing)
+		System.out.print("Pinging...\n");
+		String pingResult = client.ping("BrokerClientApplication");
+		System.out.println(pingResult);
 
 	}
 

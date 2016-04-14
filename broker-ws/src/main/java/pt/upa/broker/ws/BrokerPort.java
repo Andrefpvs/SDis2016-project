@@ -3,6 +3,8 @@ package pt.upa.broker.ws;
 import java.util.List;
 import javax.jws.WebService;
 
+import pt.upa.broker.*;
+
 @WebService(
 	    endpointInterface="pt.upa.broker.ws.BrokerPortType",
 	    wsdlLocation="broker.1_0.wsdl",
@@ -13,11 +15,26 @@ import javax.jws.WebService;
 )
 
 public class BrokerPort implements BrokerPortType {
+	
+	BrokerDomain domain;
+	
+	//endpoint
+	private BrokerEndpointManager endpoint;	
+
+	public BrokerPort(BrokerEndpointManager endpoint) {
+		this.endpoint = endpoint;
+		this.domain = new BrokerDomain(this.endpoint.getWsName());
+	}
+	
+	
+	/*
+	 *  BrokerPortType implementation
+	 */
 
 	@Override
 	public String ping(String name) {
 		// TODO Actually implement the method
-		return "PONG!";
+		return "Hello " + name;
 	}
 
 	@Override

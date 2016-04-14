@@ -7,10 +7,6 @@ public class TransporterClientApplication {
 	public static void main(String[] args) throws Exception {
 		System.out.println(TransporterClientApplication.class.getSimpleName() + " starting...");
 		
-		//TransporterClient client = new TransporterClient(uddiurl, wsname);
-		
-		//client.ping("123");
-		// Check arguments
 		if (args.length == 0) {
 			System.err.println("Argument(s) missing!");
 			System.err.println("Usage: java " + TransporterClientApplication.class.getName() + " wsURL OR uddiURL wsName");
@@ -26,7 +22,8 @@ public class TransporterClientApplication {
 			wsName = args[1]; // ex.: mvn -Dws.i=2 exec:java (look for UpaTransporter2)
 		}
 
-		/** Create client
+		/** 
+		 *  Create client
 		 *  This object will then be reused in the Broker
 		 *  whenever we want to "talk" with the client
 		 */
