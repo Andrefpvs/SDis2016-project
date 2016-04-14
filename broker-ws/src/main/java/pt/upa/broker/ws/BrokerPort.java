@@ -27,6 +27,10 @@ public class BrokerPort implements BrokerPortType {
 		this.domain = new BrokerDomain(this.endpoint.getWsName(), this.endpoint.getUddiURL());
 	}
 	
+	BrokerPort(String serviceName) {
+		this.domain = new BrokerDomain(serviceName);
+	}
+	
 	
 	/*
 	 *  BrokerPortType implementation
