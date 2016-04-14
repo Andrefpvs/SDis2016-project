@@ -6,7 +6,8 @@ import java.util.TimerTask;
 import pt.upa.transporter.TransporterDomain;
 
 /**
- * 
+ * Class that after a given time (milliseconds),
+ * notifies a given job to update its state
  */
 
 public class TransporterUpdateReminder {

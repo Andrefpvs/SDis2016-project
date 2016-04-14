@@ -222,7 +222,7 @@ public class TransporterDomain {
 			TransporterUpdateReminder reminder = 
 					new TransporterUpdateReminder(timeToNextState, job.getJobIdentifier(), this);
 		}
-		
+		jobs.put(jobIdentifier, job);
 	}
 	
 	public String jobStateToString(JobStateView state) {

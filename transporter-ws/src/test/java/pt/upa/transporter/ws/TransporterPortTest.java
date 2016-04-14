@@ -364,9 +364,7 @@ public class TransporterPortTest {
 		assertEquals(true, localPort.listJobs().isEmpty());
 		assertEquals(0, localPort.listJobs().size());
 
-	}
-	
-	/* TIMER tests start here */
+	}	
 	
 	/**
 	 * Test if jobs update their status automatically
@@ -377,80 +375,82 @@ public class TransporterPortTest {
 		JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
 		JobView job2 = localPort.requestJob("Lisboa", "Leiria", 41);
 
-		assertEquals(JobStateView.PROPOSED, job1.getJobState());
-		assertEquals(JobStateView.PROPOSED, job2.getJobState());
+		assertEquals(JobStateView.PROPOSED, localPort.listJobs().get(0).getJobState());
+		assertEquals(JobStateView.PROPOSED, localPort.listJobs().get(1).getJobState());
 
-		localPort.decideJob(job1.getJobIdentifier(), true);
-		assertEquals(JobStateView.ACCEPTED, job1.getJobState());
-		localPort.decideJob(job2.getJobIdentifier(), true);
-		assertEquals(JobStateView.ACCEPTED, job2.getJobState());
+		localPort.decideJob(localPort.listJobs().get(0).getJobIdentifier(), true);
+		assertEquals(JobStateView.ACCEPTED, localPort.listJobs().get(0).getJobState());
+		localPort.decideJob(localPort.listJobs().get(1).getJobIdentifier(), true);
+		assertEquals(JobStateView.ACCEPTED, localPort.listJobs().get(1).getJobState());
 		
-		System.out.println("testUpdateJobState Live State View: ");
+		System.out.println("\"testUpdateJobState\" Live State View for jobs " + 
+				localPort.listJobs().get(0).getJobIdentifier() + " (Job 1) and " +
+				localPort.listJobs().get(1).getJobIdentifier() + " (Job 2): ");
 		int milliseconds = 1000;
 		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));	
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));	
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1001);
-		assertNotEquals(JobStateView.ACCEPTED, job1.getJobState());
+		assertNotEquals(JobStateView.ACCEPTED, localPort.listJobs().get(0).getJobState());
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1000);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		milliseconds += 1000;		Thread.sleep(1001);
 		System.out.println("After " + milliseconds + "ms: Job 1 - " + 
-				localPort.domain.jobStateToString(job1.getJobState()) + 
-				"  Job 2 - " + localPort.domain.jobStateToString(job2.getJobState()));
+				localPort.domain.jobStateToString(localPort.listJobs().get(0).getJobState()) + 
+				"  Job 2 - " + localPort.domain.jobStateToString(localPort.listJobs().get(1).getJobState()));
 		
-		assertEquals(JobStateView.COMPLETED, job1.getJobState());
-		assertEquals(JobStateView.COMPLETED, job2.getJobState());
+		assertEquals(JobStateView.COMPLETED, localPort.listJobs().get(0).getJobState());
+		assertEquals(JobStateView.COMPLETED, localPort.listJobs().get(1).getJobState());
 	}
 
 }
