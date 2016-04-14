@@ -66,17 +66,17 @@ public class BrokerDomain {
 		cityList.add("Braga");
 		cityList.add("Viana do Castelo");
 		cityList.add("Vila Real");
-		cityList.add("Bragança");
+		cityList.add("BraganÃ§a");
 		// Sul
-		cityList.add("Setúbal");
-		cityList.add("Évora");
+		cityList.add("SetÃºbal");
+		cityList.add("Ã‰vora");
 		cityList.add("Portalegre");
 		cityList.add("Beja");
 		cityList.add("Faro");
 		// Centro
 		cityList.add("Lisboa");
 		cityList.add("Leiria");
-		cityList.add("Santarém");
+		cityList.add("SantarÃ©m");
 		cityList.add("Castelo Branco");
 		cityList.add("Coimbra");
 		cityList.add("Aveiro");

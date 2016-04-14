@@ -55,8 +55,7 @@ public class BrokerPort implements BrokerPortType {
 
 	@Override
 	public void clearTransports() {
-		domain.clearTransports();
-		
+		domain.clearTransports();		
 	}
 	
 }
