@@ -44,6 +44,11 @@ public class BrokerDomain {
 		initialiseCities();
 	}
 	
+	public BrokerDomain(String serviceName) {
+		this.wsname = wsname;
+		initialiseCities();
+	}
+
 	public String ping(String name) {        
 		String response = "";
 		
@@ -77,7 +82,7 @@ public class BrokerDomain {
 		if (!cities.contains(destination)) {
 			throw new UnknownLocationFault_Exception("Destination location unknown", new UnknownLocationFault());
 		}
-		
+			
 		if (price < 0) {
 			throw new InvalidPriceFault_Exception("Your price is negative...", new InvalidPriceFault());
 		}
@@ -87,7 +92,7 @@ public class BrokerDomain {
 					+ "that price", new UnavailableTransportPriceFault());
 		}
 		
-		updateTransporters();
+		//updateTransporters();
 		
 		/*
 		 * Build TransportView
@@ -176,6 +181,7 @@ public class BrokerDomain {
 	}
 	
 	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
+		
 		TransportView transport = transports.get(id);
 		
 		if (transport == null) {

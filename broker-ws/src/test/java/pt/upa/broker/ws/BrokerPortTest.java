@@ -110,14 +110,6 @@ public class BrokerPortTest {
 		localPort.requestTransport("Viseu", null, 9);
 	}
 	
-	//Test requesting a transport with a null price 
-		@Test(expected = InvalidPriceFault_Exception.class)
-		public void testRequestTransportWithNullPrice() throws Exception {
-			localPort = new BrokerPort("UpaTransporter1");
-			
-			localPort.requestTransport("Viseu", "Leiria", (Integer) null);
-		}
-			
 		
 	//Test requesting a transport with an invalid price. 
 	@Test (expected = InvalidPriceFault_Exception.class)
@@ -125,11 +117,19 @@ public class BrokerPortTest {
 		//localPort = new BrokerPort("UpaTransporter1");
 		localPort.requestTransport("Lisboa", "Leiria", -1);
 	}
-    @Test
-    public void test() {
+	@Test 
+	public void testViewTransport() throws Exception {
+		//localPort = new BrokerPort("UpaTransporter1");
+		String TransportId = "random";
+		localPort.viewTransport(TransportId);
+	}
+	@Test (expected = UnknownTransportFault_Exception.class)
+	public void testViewTransportWithNullId() throws Exception {
+		//localPort = new BrokerPort("UpaTransporter1");
+		localPort.viewTransport(null);
+	}
+
 
         // assertEquals(expected, actual);
         // if the assert fails, the test fails
     }
-
-}
