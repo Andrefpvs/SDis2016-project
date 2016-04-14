@@ -92,7 +92,7 @@ public class BrokerDomain {
 					+ "that price", new UnavailableTransportPriceFault());
 		}
 		
-		//updateTransporters();
+		updateTransporters();
 		
 		/*
 		 * Build TransportView
