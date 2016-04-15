@@ -179,6 +179,53 @@ public class BrokerPortTest {
 	}
 	
 	/**
+	 * Test that when we receive job offers, but none of them is 
+	 * under the price asked by the client, the
+	 * UnavailableTransportPriceFault Exception is thrown
+	 */
+	@Test(expected = UnavailableTransportPriceFault_Exception.class)
+	public void testRequestTransportNoGoodPrices(
+			@Mocked final UDDINaming uddiNaming,
+			@Mocked final TransporterClient client) 
+			throws Exception {
+		
+		job1.setCompanyName(TRANSPORTER_WS_NAME_1);
+		job1.setJobDestination("Leiria");
+		job1.setJobIdentifier("T1I1");
+		job1.setJobOrigin("Lisboa");
+		job1.setJobPrice(13);
+		job1.setJobState(JobStateView.PROPOSED);
+		JobView job3 = new JobView();
+		job3.setCompanyName(TRANSPORTER_WS_NAME_3);
+		job3.setJobDestination("Leiria");
+		job3.setJobIdentifier("T3I1");
+		job3.setJobOrigin("Lisboa");
+		job3.setJobPrice(94);
+		job3.setJobState(JobStateView.PROPOSED);
+		
+    	endpoints.add(TRANSPORTER_WS_URL_3);
+    	TransporterClient transporter3 = new TransporterClient(TRANSPORTER_WS_URL_3);
+		
+        new Expectations() {{
+        	uddiNaming.list("UpaTransporter%"); result = endpoints;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); result = transporter1;
+        	new TransporterClient(TRANSPORTER_WS_URL_3); result = transporter3;
+        	client.requestJob("Lisboa", "Leiria", 12); returns(job1, job3);
+        }};
+		
+		String job = localPort.requestTransport("Lisboa", "Leiria", 12);
+		
+        new Verifications() {{
+            // Verify that the following functions were called
+        	// the specified amount of times
+        	uddiNaming.list("UpaTransporter%"); times = 1;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); minTimes = 1;
+        	new TransporterClient(TRANSPORTER_WS_URL_3); minTimes = 1;
+        	client.requestJob("Lisboa", "Leiria", 9); times = 2;
+        }};		
+	}
+	
+	/**
 	 * Test requesting a transport from an unknown source
 	 */
 	@Test(expected = UnknownLocationFault_Exception.class)
