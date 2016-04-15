@@ -118,8 +118,8 @@ public class BrokerPortTest {
 		job1.setJobOrigin("Lisboa");
 		job1.setJobPrice(5);
 		job1.setJobState(JobStateView.PROPOSED);
-		JobView job2 = job1;
-		job2.setJobState(JobStateView.ACCEPTED);
+		JobView job1Accepted = job1;
+		job1Accepted.setJobState(JobStateView.ACCEPTED);
 		
 		
         new Expectations() {{
@@ -127,7 +127,7 @@ public class BrokerPortTest {
         	new TransporterClient(TRANSPORTER_WS_URL_1); result = transporter1;
         	client.requestJob("Lisboa", "Leiria", 9); result = job1;
         	client.jobStatus("T1I1"); result = job1;
-        	client.decideJob("T1I1", true); result = job2;
+        	client.decideJob("T1I1", true); result = job1Accepted;
         }};
 		
 		String job = localPort.requestTransport("Lisboa", "Leiria", 9);
@@ -343,16 +343,99 @@ public class BrokerPortTest {
 		localPort.requestTransport("Lisboa", "Leiria", -1);
 	}
 	
-	/* Come back to these later
+	/**
+	 * Test that viewTransport correctly returns an updated view
+	 * of the transport's state, after contacting the Transporter
+	 */
 	@Test 
-	public void testViewTransport() throws Exception { //TODO FAILING
-		String TransportId = "random";
-		localPort.viewTransport(TransportId);
-	}
-	@Test (expected = UnknownTransportFault_Exception.class)
-	public void testViewTransportWithNullId() throws Exception { //TODO FAILING
-		localPort.viewTransport(null);
-	}
-	*/
+	public void testViewTransport(
+			@Mocked final UDDINaming uddiNaming,
+			@Mocked final TransporterClient client) 
+			throws Exception {
+		job1.setCompanyName(TRANSPORTER_WS_NAME_1);
+		job1.setJobDestination("Leiria");
+		job1.setJobIdentifier("T1I1");
+		job1.setJobOrigin("Lisboa");
+		job1.setJobPrice(5);
+		job1.setJobState(JobStateView.PROPOSED);
+		JobView job1Accepted = job1;
+		job1Accepted.setJobState(JobStateView.ACCEPTED);
+		JobView job1Heading = job1Accepted;
+		job1Heading.setJobState(JobStateView.HEADING);
+		
+		
+        new Expectations() {{
+        	uddiNaming.list("UpaTransporter%"); result = endpoints;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); result = transporter1;
+        	client.requestJob("Lisboa", "Leiria", 9); result = job1;
+        	client.jobStatus("T1I1"); result = job1;
+        	client.decideJob("T1I1", true); result = job1Accepted;
+        	client.jobStatus("T1I1").getJobState(); result = JobStateView.HEADING;
+        }};
+		
+		String job = localPort.requestTransport("Lisboa", "Leiria", 9);
+		assertEquals("T1I1", job);
+		
+		TransportView transport = localPort.viewTransport("T1I1");
+		
+		
+        new Verifications() {{
+            // Verify that the following functions were called
+        	// the specified amount of times
+        	uddiNaming.list("UpaTransporter%"); times = 2;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); minTimes = 1;
+        	client.requestJob("Lisboa", "Leiria", 9); minTimes = 1;
+        	client.jobStatus("T1I1"); minTimes = 1;
+        	client.decideJob("T1I1", true); minTimes = 1;
+        	client.jobStatus("T1I1").getJobState(); minTimes = 1;
+        }};	
 
+		assertEquals(TransportStateView.HEADING, transport.getState());
+	}
+	
+	/**
+	 * Test that viewTransport correctly returns an updated view
+	 * of the transport's state, after contacting the Transporter
+	 */
+	@Test(expected = UnknownTransportFault_Exception.class)
+	public void testViewTransportWithInvalidID(
+			@Mocked final UDDINaming uddiNaming,
+			@Mocked final TransporterClient client) 
+			throws Exception {
+		job1.setCompanyName(TRANSPORTER_WS_NAME_1);
+		job1.setJobDestination("Leiria");
+		job1.setJobIdentifier("T1I1");
+		job1.setJobOrigin("Lisboa");
+		job1.setJobPrice(5);
+		job1.setJobState(JobStateView.PROPOSED);
+		JobView job1Accepted = job1;
+		job1Accepted.setJobState(JobStateView.ACCEPTED);
+		JobView job1Heading = job1Accepted;
+		job1Heading.setJobState(JobStateView.HEADING);
+		
+		
+        new Expectations() {{
+        	uddiNaming.list("UpaTransporter%"); result = endpoints;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); result = transporter1;
+        	client.requestJob("Lisboa", "Leiria", 9); result = job1;
+        	client.jobStatus("T1I1"); result = job1;
+        	client.decideJob("T1I1", true); result = job1Accepted;
+        }};
+		
+		String job = localPort.requestTransport("Lisboa", "Leiria", 9);
+		assertEquals("T1I1", job);
+		
+		TransportView transport = localPort.viewTransport("T33I33");
+		
+		
+        new Verifications() {{
+            // Verify that the following functions were called
+        	// the specified amount of times
+        	uddiNaming.list("UpaTransporter%"); times = 2;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); minTimes = 1;
+        	client.requestJob("Lisboa", "Leiria", 9); minTimes = 1;
+        	client.jobStatus("T1I1"); minTimes = 1;
+        	client.decideJob("T1I1", true); minTimes = 1;
+        }};	
+	}
 }
