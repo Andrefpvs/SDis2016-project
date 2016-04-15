@@ -226,6 +226,83 @@ public class BrokerPortTest {
 	}
 	
 	/**
+	 * Test that when we receive multiple valid job offers,
+	 * the Broker correctly chooses the cheapest
+	 */
+	@Test
+	public void testRequestTransportCheapestPrice(
+			@Mocked final UDDINaming uddiNaming,
+			@Mocked final TransporterClient client) 
+			throws Exception {
+		
+		job1.setCompanyName(TRANSPORTER_WS_NAME_1);
+		job1.setJobDestination("Leiria");
+		job1.setJobIdentifier("T1I1");
+		job1.setJobOrigin("Lisboa");
+		job1.setJobPrice(15); //valid price
+		job1.setJobState(JobStateView.PROPOSED);
+		JobView job1Rejected = job1;
+		job1Rejected.setJobState(JobStateView.REJECTED);
+		JobView job2 = new JobView();
+		job2.setCompanyName(TRANSPORTER_WS_NAME_2);
+		job2.setJobDestination("Leiria");
+		job2.setJobIdentifier("T2I1");
+		job2.setJobOrigin("Lisboa");
+		job2.setJobPrice(94); //bad price
+		job2.setJobState(JobStateView.PROPOSED);
+		JobView job2Rejected = job2;
+		job2Rejected.setJobState(JobStateView.REJECTED);
+		JobView job3 = new JobView();
+		job3.setCompanyName(TRANSPORTER_WS_NAME_3);
+		job3.setJobDestination("Leiria");
+		job3.setJobIdentifier("T3I1");
+		job3.setJobOrigin("Lisboa");
+		job3.setJobPrice(10); //valid and cheapest price
+		job3.setJobState(JobStateView.PROPOSED);
+		JobView job3Accepted = job3;
+		job3Accepted.setJobState(JobStateView.ACCEPTED);
+		
+    	endpoints.add(TRANSPORTER_WS_URL_2);
+    	TransporterClient transporter2 = new TransporterClient(TRANSPORTER_WS_URL_2);
+    	endpoints.add(TRANSPORTER_WS_URL_3);
+    	TransporterClient transporter3 = new TransporterClient(TRANSPORTER_WS_URL_3);
+		
+        new Expectations() {{
+        	uddiNaming.list("UpaTransporter%"); result = endpoints;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); result = transporter1;
+        	new TransporterClient(TRANSPORTER_WS_URL_2); result = transporter2;
+        	new TransporterClient(TRANSPORTER_WS_URL_3); result = transporter3;
+        	client.requestJob("Lisboa", "Leiria", 31); returns(job1, job2, job3);
+        	client.jobStatus("T1I1"); result = job1;
+        	client.jobStatus("T2I1"); result = job2;
+        	client.jobStatus("T3I1"); result = job3;
+        	client.decideJob("T1I1", false); result = job1Rejected;
+        	client.decideJob("T2I1", false); result = job2Rejected;
+        	client.decideJob("T3I1", true); result = job3Accepted;
+        }};
+		
+		String job = localPort.requestTransport("Lisboa", "Leiria", 31);
+		
+        new Verifications() {{
+            // Verify that the following functions were called
+        	// the specified amount of times
+        	uddiNaming.list("UpaTransporter%"); times = 1;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); minTimes = 1;
+        	new TransporterClient(TRANSPORTER_WS_URL_2); minTimes = 1;
+        	new TransporterClient(TRANSPORTER_WS_URL_3); minTimes = 1;
+        	client.requestJob("Lisboa", "Leiria", 31); times = 3;
+        	client.jobStatus("T1I1"); minTimes = 1;
+        	client.jobStatus("T2I1"); minTimes = 1;
+        	client.jobStatus("T3I1"); minTimes = 1;
+        	client.decideJob("T1I1", false); minTimes = 1;
+        	client.decideJob("T2I1", false); minTimes = 1;
+        	client.decideJob("T3I1", true); minTimes = 1;
+        }};		
+        
+        assertEquals("T3I1", job);
+	}
+	
+	/**
 	 * Test requesting a transport from an unknown source
 	 */
 	@Test(expected = UnknownLocationFault_Exception.class)
