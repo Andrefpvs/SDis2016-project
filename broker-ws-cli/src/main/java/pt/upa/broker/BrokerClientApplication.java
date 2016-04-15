@@ -40,10 +40,7 @@ public class BrokerClientApplication {
 		// Test remote invocation with ping method (does not replace Unit testing)
 		System.out.print("Pinging...\n");
 		String pingResult = client.ping("BrokerClientApplication");
-		System.out.println(pingResult);
-		System.out.println(client.requestTransport("Lisboa", "Leiria", 49)); //TODO Remove line
-		
-		
+		System.out.println(pingResult);	
 
 	}
 

@@ -10,11 +10,6 @@ import pt.upa.broker.ws.UnknownTransportFault_Exception;
 
 
 public class ViewTransportIT extends BaseBrokerIT {
-	private static final String TRANSPORTER_WS_NAME_1 = "UpaTransporter1";
-	private static final String TRANSPORTER_WS_NAME_2 = "UpaTransporter2";
-	private static final String TRANSPORTER_WS_URL_1 = "http://localhost:8081/transporter-ws/endpoint";
-	private static final String TRANSPORTER_WS_URL_2 = "http://localhost:8082/transporter-ws/endpoint";
-	private static final String UDDIURL = "http://localhost:9090";
 	private static final String SUL_CITY1 = "Beja";
 	private static final String SUL_CITY2 = "Faro";
 	private static final String CENTRO_CITY1 = "Lisboa";
