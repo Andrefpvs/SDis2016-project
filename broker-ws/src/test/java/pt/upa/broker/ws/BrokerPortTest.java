@@ -17,12 +17,6 @@ import java.util.Collection;
 
 import javax.xml.registry.JAXRException;
 
-/**
- *  Unit Test example
- *  
- *  Invoked by Maven in the "test" life-cycle phase
- *  If necessary, should invoke "mock" remote servers 
- */
 public class BrokerPortTest {
 
     // static members
@@ -31,6 +25,10 @@ public class BrokerPortTest {
 	private static final String UDDIURL = "http://localhost:9090";
 	private static final String TRANSPORTER_WS_URL_1 = "http://localhost:8081/transporter-ws/endpoint";
 	private static final String TRANSPORTER_WS_NAME_1 = "UpaTransporter1";
+	private static final String TRANSPORTER_WS_URL_2 = "http://localhost:8082/transporter-ws/endpoint";
+	private static final String TRANSPORTER_WS_NAME_2 = "UpaTransporter2";
+	private static final String TRANSPORTER_WS_URL_3 = "http://localhost:8083/transporter-ws/endpoint";
+	private static final String TRANSPORTER_WS_NAME_3 = "UpaTransporter3";
 
     // one-time initialization and clean-up
 
@@ -145,6 +143,39 @@ public class BrokerPortTest {
         }};
 		
 		assertEquals("T1I1", job);
+	}
+	
+	/**
+	 * Test that when every Transporter returns null (i.e., we
+	 * receive no job offers for the requested locations and/or price)
+	 * the UnavailableTransportFault Exception is thrown
+	 */
+	@Test(expected = UnavailableTransportFault_Exception.class)
+	public void testRequestTransportNoOffers(
+			@Mocked final UDDINaming uddiNaming,
+			@Mocked final TransporterClient client) 
+			throws Exception {
+		
+    	endpoints.add(TRANSPORTER_WS_URL_3);
+    	TransporterClient transporter3 = new TransporterClient(TRANSPORTER_WS_URL_3);
+		
+        new Expectations() {{
+        	uddiNaming.list("UpaTransporter%"); result = endpoints;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); result = transporter1;
+        	new TransporterClient(TRANSPORTER_WS_URL_3); result = transporter3;
+        	client.requestJob("Porto", "Leiria", 9); result = null;
+        }};
+		
+		String job = localPort.requestTransport("Porto", "Leiria", 9);
+		
+        new Verifications() {{
+            // Verify that the following functions were called
+        	// the specified amount of times
+        	uddiNaming.list("UpaTransporter%"); times = 1;
+        	new TransporterClient(TRANSPORTER_WS_URL_1); minTimes = 1;
+        	new TransporterClient(TRANSPORTER_WS_URL_3); minTimes = 1;
+        	client.requestJob("Porto", "Leiria", 9); minTimes = 1;
+        }};		
 	}
 	
 	/**

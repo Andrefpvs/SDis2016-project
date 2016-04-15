@@ -110,12 +110,13 @@ public class BrokerDomain {
 		}
 		
 		if (jobOffers.isEmpty()) { //if we had no offers
+			transport.setState(TransportStateView.FAILED);
 			throw new UnavailableTransportFault_Exception("No transports exist for "
 					+ "those locations" , new UnavailableTransportFault());
 		} else {
 			transport.setState(TransportStateView.BUDGETED);
 			JobView bestJob = sortedJobOffers.get(sortedJobOffers.firstKey());
-			if (!(bestJob.getJobPrice() < price)) {
+			if (!(bestJob.getJobPrice() < price)) { //if we had no offers below our price
 				transport.setState(TransportStateView.FAILED);
 				throw new UnavailableTransportPriceFault_Exception("No transports exist for "
 						+ "that price", new UnavailableTransportPriceFault());
