@@ -164,11 +164,15 @@ public class TransporterDomain {
 	 *
 	 */
 	
-	public int transporterId(String wsname){ //TODO Test invalid ID situation
+	public int transporterId(String wsname){
 		int i = wsname.length();
 		while (i > 0 && Character.isDigit(wsname.charAt(i -1))) {
 			i--;			
 		}
+		if (wsname.substring(i) == "") {
+			System.err.println("Starting " + wsname + "with no given "
+					+ "Transporter ID number!");
+		}		
 		return new Integer(wsname.substring(i));
 	}
 	

@@ -1,7 +1,6 @@
 package pt.upa.broker;
 
 import pt.upa.broker.ws.cli.*;
-import java.lang.*;
 
 public class BrokerClientApplication {
 
