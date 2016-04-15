@@ -26,7 +26,7 @@ import pt.upa.transporter.ws.cli.TransporterClient;
 public class BrokerDomain {
 	
 	private static final String MESSAGE_TO_UNKNOWNS = "Who is this?";
-		
+	
 	
 	private TreeMap<String, TransportView> transports; //String = Transport ID
 	private ArrayList<TransporterClient> transporters;
@@ -44,10 +44,14 @@ public class BrokerDomain {
 		initialiseCities();
 	}
 	
-	public BrokerDomain(String serviceName) {
+	//constructor used for unit testing
+	public BrokerDomain(String wsname) {
+		this.transports = new TreeMap<String, TransportView>();
+		this.transporters = new ArrayList<TransporterClient>();
 		this.wsname = wsname;
 		initialiseCities();
 	}
+
 
 	public String ping(String name) {        
 		String response = "";
@@ -56,7 +60,7 @@ public class BrokerDomain {
         	return MESSAGE_TO_UNKNOWNS;
         } 
 		response += "Hello, " + name + ". " + wsname + " is ready! "
-				+ "Here's what the Transporters I know about have to say:\n";
+				+ "Here's what the Transporters I know about tell me:\n";
 		
 		updateTransporters();
 		
@@ -85,11 +89,6 @@ public class BrokerDomain {
 			
 		if (price < 0) {
 			throw new InvalidPriceFault_Exception("Your price is negative...", new InvalidPriceFault());
-		}
-		
-		if (price > 100) {
-			throw new UnavailableTransportPriceFault_Exception("No transports exist for "
-					+ "that price", new UnavailableTransportPriceFault());
 		}
 		
 		updateTransporters();
@@ -126,6 +125,8 @@ public class BrokerDomain {
 			JobView bestJob = sortedJobOffers.get(sortedJobOffers.firstKey());
 			if (!(bestJob.getJobPrice() < price)) {
 				transport.setState(TransportStateView.FAILED);
+				throw new UnavailableTransportPriceFault_Exception("No transports exist for "
+						+ "that price", new UnavailableTransportPriceFault());
 			} else {
 				transport.setId(bestJob.getJobIdentifier());
 				transport.setPrice(bestJob.getJobPrice());

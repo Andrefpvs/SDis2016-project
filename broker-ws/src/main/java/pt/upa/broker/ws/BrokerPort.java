@@ -27,10 +27,10 @@ public class BrokerPort implements BrokerPortType {
 		this.domain = new BrokerDomain(this.endpoint.getWsName(), this.endpoint.getUddiURL());
 	}
 	
-	BrokerPort(String serviceName) {
-		this.domain = new BrokerDomain(serviceName);
+	//constructor used for unit testing
+	public BrokerPort(String serviceName, String uddiURL) throws JAXRException {
+		this.domain = new BrokerDomain(serviceName, uddiURL);
 	}
-	
 	
 	/*
 	 *  BrokerPortType implementation

@@ -95,9 +95,7 @@ public class BrokerClient implements BrokerPortType{
 		if (verbose)
 			System.out.println("Creating stub...");
 		service = new BrokerService();
-		port = service.getBrokerPort(); //our stub!
-										//after a "mvn install", we'll want to
-										//reuse it for our broker
+		port = service.getBrokerPort();
 
 		if (wsURL != null) {
 			if (verbose)

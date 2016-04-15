@@ -42,7 +42,7 @@ public class BrokerClientApplication {
 		System.out.print("Pinging...\n");
 		String pingResult = client.ping("BrokerClientApplication");
 		System.out.println(pingResult);
-		System.out.println(client.requestTransport("Lisboa", "Leiria", 50));
+		System.out.println(client.requestTransport("Lisboa", "Leiria", 49)); //TODO Remove line
 		
 		
 
