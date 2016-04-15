@@ -13,7 +13,7 @@ Repositório:
 
 -------------------------------------------------------------------------------
 
-## Instruções de instalação 
+## Instruções para instalação 
 
 
 ### Ambiente
