@@ -42,8 +42,9 @@ cd SD1
 
 ```
 git clone -b SD_R1 https://github.com/tecnico-distsys/A_65-project
+cd A_65-project
 ```
-
+*A partir daqui, todos os passos começam na pasta "A_65-project"*
 
 [4] Instalar módulos de bibliotecas auxiliares
 
@@ -51,6 +52,7 @@ git clone -b SD_R1 https://github.com/tecnico-distsys/A_65-project
 cd uddi-naming
 mvn clean install
 ```
+
 
 
 -------------------------------------------------------------------------------
@@ -64,12 +66,11 @@ cd transporter-ws
 mvn clean generate-sources install exec:java
 ```
 
-[2] Construir **cliente** de *UpaTransporter1* e executar testes
+[2] Construir **cliente** de *UpaTransporter1* e executar testes ("install" inclui o passo "verify")
 
 ```
 cd transporter-ws-cli
 mvn clean generate-sources install
-mvn verify
 ```
 
 [3] Construir e executar **servidor** *UpaTransporter2*
@@ -99,12 +100,11 @@ mvn clean generate-sources install exec:java
 ```
 
 
-[2] Construir **cliente** e executar testes
+[2] Construir **cliente** e executar testes ("install" inclui o passo "verify")
 
 ```
 cd broker-ws-cli
 mvn clean generate-sources install
-mvn verify
 ```
 -------------------------------------------------------------------------------
 **FIM**
