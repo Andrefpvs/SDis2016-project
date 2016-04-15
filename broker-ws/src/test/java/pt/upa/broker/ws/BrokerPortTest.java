@@ -48,9 +48,9 @@ public class BrokerPortTest {
     // members
 
     private BrokerPort localPort;
-    Collection<String> endpoints = new ArrayList<String>();
-    TransporterClient transporter1 = new TransporterClient(TRANSPORTER_WS_URL_1);
-    JobView job1 = new JobView();
+    Collection<String> endpoints;
+    TransporterClient transporter1;
+    JobView job1;
     
     // initialization and clean-up for each test
 
@@ -60,14 +60,19 @@ public class BrokerPortTest {
 			localPort = new BrokerPort(WS_NAME, UDDIURL);
 		} catch (JAXRException e) {
 			// Ignore. We will be mocking the UDDINaming object
-		}    	
+		}
+    	endpoints = new ArrayList<String>();
     	endpoints.add(TRANSPORTER_WS_URL_1);
     	transporter1 = new TransporterClient(TRANSPORTER_WS_URL_1);
+    	job1 = new JobView();
     }
 
     @After
     public void tearDown() {
     	localPort = null;
+    	endpoints = null;
+    	transporter1 = null;
+    	job1 = null;
     }
 
 
