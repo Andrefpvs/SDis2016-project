@@ -209,8 +209,8 @@ public class TransporterPortTest {
 	 * Test that the Job Identifiers are being correctly formed according to the
 	 * following rules:
 	 * 
-	 * JobView jobIdentifier Format: T + transporterId + I + jobNumber Ex.: T1I4
-	 * = UpaTransporter1 + JobNumber = 4
+	 * JobView jobIdentifier Format: T + transporterId + I + jobNumber 
+	 * Ex.: T1I4 = UpaTransporter1 + JobNumber = 4
 	 */
 	@Test
 	public void testRequestJobIdentifiers() throws Exception {
@@ -266,7 +266,6 @@ public class TransporterPortTest {
 		localPort = new TransporterPort("UpaTransporter1");
 		JobView job1 = localPort.requestJob("Leiria", "Lisboa", 40);
 		JobView job2 = localPort.decideJob("T10I4", true);
-
 	}
 
 	/**
@@ -278,7 +277,6 @@ public class TransporterPortTest {
 		JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
 		JobView job2 = localPort.decideJob("T1I1", true);
 		assertEquals(JobStateView.ACCEPTED, job2.getJobState());
-
 	}
 
 	/**
@@ -290,7 +288,6 @@ public class TransporterPortTest {
 		JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
 		JobView job2 = localPort.decideJob("T1I1", false);
 		assertEquals(JobStateView.REJECTED, job2.getJobState());
-
 	}
 
 	/**
@@ -303,7 +300,6 @@ public class TransporterPortTest {
 		JobView job2 = localPort.decideJob("T1I1", true);
 		assertEquals(JobStateView.ACCEPTED, job2.getJobState());
 		JobView job3 = localPort.decideJob("T1I1", true);
-
 	}
 
 	/**
@@ -319,7 +315,6 @@ public class TransporterPortTest {
 		assertEquals("Leiria", job2.getJobOrigin());
 		assertEquals("Lisboa", job2.getJobDestination());
 		assertEquals(JobStateView.PROPOSED, job2.getJobState());
-
 	}
 
 	/**
@@ -331,7 +326,6 @@ public class TransporterPortTest {
 		JobView job1 = localPort.requestJob("Leiria", "Lisboa", 50);
 		JobView job2 = localPort.jobStatus("T1I3");
 		assertNull(job2);
-
 	}
 
 	/**
@@ -348,7 +342,6 @@ public class TransporterPortTest {
 		assertEquals(joblist.get(0), job1);
 		assertEquals(joblist.get(1), job2);
 		assertEquals(joblist.get(2), job3);
-
 	}
 
 	/**
@@ -363,7 +356,6 @@ public class TransporterPortTest {
 		localPort.clearJobs();
 		assertEquals(true, localPort.listJobs().isEmpty());
 		assertEquals(0, localPort.listJobs().size());
-
 	}	
 	
 	/**

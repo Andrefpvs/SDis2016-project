@@ -39,6 +39,8 @@ public class TransporterDomain {
 	public String ping(String name) {
         if (name == null || name.length() == 0) {
         	return MESSAGE_TO_UNKNOWNS;
+        } else if (name.equals("--getTransporterName")){
+        	return this.wsname;
         } else return "Hello, " + name + ". " + wsname + " is ready!";
 	}
 	
@@ -169,7 +171,7 @@ public class TransporterDomain {
 		while (i > 0 && Character.isDigit(wsname.charAt(i -1))) {
 			i--;			
 		}
-		if (wsname.substring(i) == "") {
+		if (wsname.substring(i).equals("")) {
 			System.err.println("Starting " + wsname + "with no given "
 					+ "Transporter ID number!");
 		}		

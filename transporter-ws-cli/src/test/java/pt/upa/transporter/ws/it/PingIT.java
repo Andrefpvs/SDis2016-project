@@ -27,4 +27,14 @@ public class PingIT extends BaseTransporterIT {
 		assertEquals(MESSAGE_TO_UNKNOWNS, response);
 	}
 	
+	/**
+	 * Test that ping returns their name when given a specific
+	 * command
+	 */
+	@Test
+	public void testReturnTransporterName() throws Exception {
+		String response = client.ping("--getTransporterName");
+		assertTrue(response.contains("UpaTransporter"));
+	}
+	
 }

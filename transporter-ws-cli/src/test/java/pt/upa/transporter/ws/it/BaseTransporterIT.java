@@ -20,7 +20,20 @@ public abstract class BaseTransporterIT {
 
 	private static Properties props = null;
 	protected static TransporterClient client = null;
+	protected static int clientNumber = 0;
 
+	public static int transporterId(String wsname){
+		int i = wsname.length();
+		while (i > 0 && Character.isDigit(wsname.charAt(i -1))) {
+			i--;			
+		}
+		if (wsname.substring(i).equals("")) {
+			System.err.println("Starting " + wsname + "with no given "
+					+ "Transporter ID number!");
+		}		
+		return new Integer(wsname.substring(i));
+	}
+	
 	@BeforeClass
 	public static void oneTimeSetup() throws Exception {
 		props = new Properties();
@@ -35,6 +48,8 @@ public abstract class BaseTransporterIT {
 		String uddiURL = props.getProperty("uddi.url");
 		String wsName = props.getProperty("ws.name");
 		String wsURL = props.getProperty("ws.url");
+		clientNumber = transporterId(wsName);
+				
 
 		if ("true".equalsIgnoreCase(uddiEnabled)) {
 			client = new TransporterClient(uddiURL, wsName);
@@ -42,12 +57,12 @@ public abstract class BaseTransporterIT {
 			client = new TransporterClient(wsURL);
 		}
 		client.setVerbose(true);
-
 	}
 
 	@AfterClass
 	public static void cleanup() {
 		client = null;
 	}
+
 
 }
