@@ -25,7 +25,7 @@ public class ExampleIT {
     public static void oneTimeTearDown() {
 
     }
-
+//TODO remove example classes
 
     // members
 
