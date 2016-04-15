@@ -18,34 +18,31 @@ Repositório:
 
 ### Ambiente
 
-[0] Iniciar sistema operativo
-
-Indicar Windows ou Linux
-*(escolher um dos dois, que esteja disponível nos laboratórios, e depois apagar esta linha)*
+[0] Iniciar sistema operativo Windows
 
 
 [1] Iniciar servidores de apoio
 
 JUDDI:
 ```
-...
+startup.bat
 ```
 
 
 [2] Criar pasta temporária
 
 ```
-cd ...
-mkdir ...
+cd Desktop
+mkdir SD1
+cd SD1
 ```
 
 
 [3] Obter código fonte do projeto (versão entregue)
 
 ```
-git clone ... 
+git clone -b SD_R1 https://github.com/tecnico-distsys/A_65-project
 ```
-*(colocar aqui comandos git para obter a versão entregue a partir da tag e depois apagar esta linha)*
 
 
 [4] Instalar módulos de bibliotecas auxiliares
@@ -55,55 +52,59 @@ cd uddi-naming
 mvn clean install
 ```
 
+
+-------------------------------------------------------------------------------
+
+### Serviço TRANSPORTER (Os 4 passos seguintes devem ser em terminais separados)
+
+[1] Construir e executar **servidor** *UpaTransporter1*
+
 ```
-cd ...
-mvn clean install
+cd transporter-ws
+mvn clean generate-sources install exec:java
+```
+
+[2] Construir **cliente** de *UpaTransporter1* e executar testes
+
+```
+cd transporter-ws-cli
+mvn clean generate-sources install
+mvn verify
+```
+
+[3] Construir e executar **servidor** *UpaTransporter2*
+
+```
+cd transporter-ws
+mvn -Dws.i=2 exec:java
+```
+
+[4] Construir **cliente** de *UpaTransporter2* e executar testes
+
+```
+cd transporter-ws-cli
+mvn -Dws.i=2 verify
 ```
 
 
 -------------------------------------------------------------------------------
 
-### Serviço TRANSPORTER
+### Serviço BROKER (Os 2 passos seguintes devem ser em terminais separados)
 
 [1] Construir e executar **servidor**
 
 ```
-cd ...-ws
-mvn clean install
-mvn exec:java
-```
-
-[2] Construir **cliente** e executar testes
-
-```
-cd ...-ws-cli
-mvn clean install
-```
-
-...
-
-
--------------------------------------------------------------------------------
-
-### Serviço BROKER
-
-[1] Construir e executar **servidor**
-
-```
-cd ...-ws
-mvn clean install
-mvn exec:java
+cd broker-ws
+mvn clean generate-sources install exec:java
 ```
 
 
 [2] Construir **cliente** e executar testes
 
 ```
-cd ...-ws-cli
-mvn clean install
+cd broker-ws-cli
+mvn clean generate-sources install
+mvn verify
 ```
-
-...
-
 -------------------------------------------------------------------------------
 **FIM**
