@@ -44,14 +44,6 @@ public class BrokerDomain {
 		initialiseCities();
 	}
 	
-	//constructor used for unit testing
-	public BrokerDomain(String wsname) {
-		this.transports = new TreeMap<String, TransportView>();
-		this.transporters = new ArrayList<TransporterClient>();
-		this.wsname = wsname;
-		initialiseCities();
-	}
-
 
 	public String ping(String name) {        
 		String response = "";
