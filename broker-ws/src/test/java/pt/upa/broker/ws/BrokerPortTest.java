@@ -394,8 +394,8 @@ public class BrokerPortTest {
 	}
 	
 	/**
-	 * Test that viewTransport correctly returns an updated view
-	 * of the transport's state, after contacting the Transporter
+	 * Test that when viewTransport received an invalid transport ID,
+	 * the UnknownTransportFault Exception is correctly thrown
 	 */
 	@Test(expected = UnknownTransportFault_Exception.class)
 	public void testViewTransportWithInvalidID(
