@@ -176,10 +176,14 @@ public class BrokerDomain {
 	
 	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
 		
+		if (id == null) {
+			throw new UnknownTransportFault_Exception("Null transport ID", new UnknownTransportFault());
+		}
+		
 		TransportView transport = transports.get(id);
 		
 		if (transport == null) {
-			throw new UnknownTransportFault_Exception("Unexisting transport ID", new UnknownTransportFault());
+			throw new UnknownTransportFault_Exception("Non-existing transport ID", new UnknownTransportFault());
 		}
 		
 		updateTransporters();

@@ -198,11 +198,11 @@ public class TransporterPortTest {
 	public void testRequestJobWithDifferentParity() throws Exception {
 		localPort = new TransporterPort(ODD_TRANSPORTER);
 		JobView job = localPort.requestJob("Leiria", "Lisboa", 34);
-		assertTrue(job.getJobPrice() > 34 && job.getJobPrice() <= 100);
+		assertTrue(job.getJobPrice() > 34 && job.getJobPrice() <= 101);
 
 		localPort = new TransporterPort(EVEN_TRANSPORTER);
 		job = localPort.requestJob("Leiria", "Lisboa", 99);
-		assertTrue(job.getJobPrice() > 99 && job.getJobPrice() <= 100);
+		assertTrue(job.getJobPrice() > 99 && job.getJobPrice() <= 101);
 	}
 
 	/**

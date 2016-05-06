@@ -86,7 +86,7 @@ public class TransporterDomain {
 			if (((this.transporterId % 2) == 0 && (price % 2) == 0)
 					|| ((this.transporterId % 2) == 1 && (price % 2) == 1)) {
 				offerPrice = ThreadLocalRandom.current().nextInt(0, price);
-			} else offerPrice = ThreadLocalRandom.current().nextInt(price + 1, 100 + 1);
+			} else offerPrice = ThreadLocalRandom.current().nextInt(price + 1, 100 + 2);
 		}
 		
 		/*
@@ -117,6 +117,9 @@ public class TransporterDomain {
 	}
 	
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
+		if(id == null) {
+			throw new BadJobFault_Exception("Null job index", new BadJobFault());
+		}
 		JobView job = jobs.get(id);
 		boolean accepted = false;
 		if (job == null) throw new BadJobFault_Exception("Invalid job index", new BadJobFault());
@@ -141,6 +144,7 @@ public class TransporterDomain {
 	}
 	
 	public JobView jobStatus(String id) {
+		if (id == null) return null;
 		JobView job = jobs.get(id);
 		if (job == null) return null;
 		
