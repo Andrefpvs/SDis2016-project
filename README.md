@@ -90,7 +90,13 @@ mvn -Dws.i=2 verify
 
 -------------------------------------------------------------------------------
 
-### Serviço BROKER (Os 2 passos seguintes devem ser em terminais separados)
+### Serviço BROKER (Os  passos seguintes devem ser em terminais separados)
+
+[0] Instalar cliente
+```
+cd broker-ws-cli
+mvn install
+```
 
 [1] Construir e executar **servidor**
 
