@@ -25,7 +25,7 @@
 		
 		<!-- Substitute server name append and number - redefine using -D option - e.g. mvn -Dws.sub=Sub -Dws.i=1 exec:java -->
         <ws.sub></ws.sub>
-		<ws.i>0</ws.i>
+        <ws.i>0</ws.i>
 
         <ws.url>http://localhost:808${ws.i}/broker-ws/endpoint</ws.url>
 
