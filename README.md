@@ -107,7 +107,7 @@ mvn clean install -DskipTests
 
 ```
 cd broker-ws
-mvn clean generate-sources install -Dws.sub=Sub -Dws.i=1 exec:java
+mvn clean generate-sources install -Dws.sub=Sub -Dws.port=8090 exec:java
 ```
 
 [3] Construir e executar **servidor principal** *UpaBroker*
