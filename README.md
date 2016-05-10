@@ -73,7 +73,7 @@ cd transporter-ws-cli
 mvn clean generate-sources install
 ```
 
-[3] Construir e executar **servidor** *UpaTransporter2*
+[3] Executar **servidor** *UpaTransporter2*
 
 ```
 cd transporter-ws
@@ -99,8 +99,14 @@ cd broker-ws
 mvn clean generate-sources install exec:java
 ```
 
+[2] Executar **servidor secundário**
 
-[2] Construir **cliente** e executar testes ("install" inclui o passo "verify")
+```
+cd broker-ws
+mvn -Dws.sub=Sub -Dws.i=1 exec:java
+```
+
+[3] Construir **cliente** e executar testes ("install" inclui o passo "verify")
 
 ```
 cd broker-ws-cli
