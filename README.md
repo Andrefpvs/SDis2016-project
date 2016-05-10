@@ -20,6 +20,11 @@ Repositório:
 
 [0] Iniciar sistema operativo Windows
 
+**Antes de continuar com os passos seguintes, é importante apagar a base de dados local do JUDDI, caso exista:**
+```
+shutdown.bat
+> apagar manualmente a pasta "target" gerada pelo JUDDI em execuções anteriores
+```
 
 [1] Iniciar servidores de apoio
 
@@ -57,7 +62,7 @@ mvn clean install
 
 -------------------------------------------------------------------------------
 
-### Serviço TRANSPORTER (Os 4 passos seguintes devem ser em terminais separados)
+### Serviço TRANSPORTER (Os passos seguintes devem ser em terminais separados)
 
 [1] Construir e executar **servidor** *UpaTransporter1*
 
@@ -90,29 +95,29 @@ mvn -Dws.i=2 verify
 
 -------------------------------------------------------------------------------
 
-### Serviço BROKER (Os  passos seguintes devem ser em terminais separados)
+### Serviço BROKER (Os passos seguintes devem ser em terminais separados)
 
-[0] Instalar cliente
+[1] Instalar cliente no repositório local da máquina (necessário para replicação)
 ```
 cd broker-ws-cli
-mvn install
+mvn clean install -DskipTests
 ```
 
-[1] Construir e executar **servidor**
-
-```
-cd broker-ws
-mvn clean generate-sources install exec:java
-```
-
-[2] Executar **servidor secundário**
+[2] Executar **servidor secundário** *UpaBrokerSub*
 
 ```
 cd broker-ws
-mvn -Dws.sub=Sub -Dws.i=1 exec:java
+mvn clean generate-sources install -Dws.sub=Sub -Dws.i=1 exec:java
 ```
 
-[3] Construir **cliente** e executar testes ("install" inclui o passo "verify")
+[3] Construir e executar **servidor principal** *UpaBroker*
+
+```
+cd broker-ws
+mvn exec:java
+```
+
+[4] Construir **cliente** e executar testes ("install" inclui o passo "verify")
 
 ```
 cd broker-ws-cli
