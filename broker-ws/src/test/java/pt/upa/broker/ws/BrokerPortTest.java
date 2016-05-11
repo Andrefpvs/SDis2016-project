@@ -6,6 +6,7 @@ import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
+import pt.upa.broker.exception.BrokerSecondaryServerNotFoundException;
 import pt.upa.transporter.ws.JobStateView;
 import pt.upa.transporter.ws.JobView;
 import pt.upa.transporter.ws.cli.TransporterClient;
@@ -56,7 +57,7 @@ public class BrokerPortTest {
     public void setUp() {
     	try {
 			localPort = new BrokerPort(WS_NAME, UDDIURL);
-		} catch (JAXRException e) {
+		} catch (JAXRException | BrokerSecondaryServerNotFoundException e) {
 			// Ignore. We will be mocking the UDDINaming object
 		}
     	endpoints = new ArrayList<String>();

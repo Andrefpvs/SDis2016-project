@@ -87,7 +87,7 @@ public class BrokerClient implements BrokerPortType{
 		// Set timeout until the response is received (unit is milliseconds; 0
 		// means infinite)
 		for (String propName : RECV_TIME_PROPS)
-			requestContext.put(propName, 1000);
+			requestContext.put(propName, receiveTimeout);
 		System.out.printf("Set receive timeout to %d milliseconds%n", receiveTimeout);
 	}
 
@@ -101,7 +101,7 @@ public class BrokerClient implements BrokerPortType{
 		bindingProvider = (BindingProvider) port;
 		requestContext = bindingProvider.getRequestContext();
 		
-		int connectionTimeout = 1000;
+		int connectionTimeout = 180000; //TODO Set appropriate values
 		// The connection timeout property has different names in different
 		// versions of JAX-WS
 		// Set them all to avoid compatibility issues
@@ -115,7 +115,7 @@ public class BrokerClient implements BrokerPortType{
 			requestContext.put(propName, connectionTimeout);
 		System.out.printf("Set connection timeout to %d milliseconds%n", connectionTimeout);
 
-		int receiveTimeout = 2000;
+		int receiveTimeout = 180000; //TODO Set appropriate values
 		// The receive timeout property has alternative names
 		// Again, set them all to avoid compability issues
 		final List<String> RECV_TIME_PROPS = new ArrayList<String>();
@@ -125,7 +125,7 @@ public class BrokerClient implements BrokerPortType{
 		// Set timeout until the response is received (unit is milliseconds; 0
 		// means infinite)
 		for (String propName : RECV_TIME_PROPS)
-			requestContext.put(propName, 1000);
+			requestContext.put(propName, receiveTimeout);
 		System.out.printf("Set receive timeout to %d milliseconds%n", receiveTimeout);
 	}
 	
@@ -213,6 +213,11 @@ public class BrokerClient implements BrokerPortType{
 	@Override
 	public void clearTransports() {
 		port.clearTransports();		
+	}
+	
+	@Override
+	public void keepStateUpdated(TransportView transport, int failedNumber) {
+		port.keepStateUpdated(transport, failedNumber);
 	}
 
 }

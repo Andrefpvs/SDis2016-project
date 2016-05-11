@@ -5,6 +5,7 @@ import javax.jws.WebService;
 import javax.xml.registry.JAXRException;
 
 import pt.upa.broker.*;
+import pt.upa.broker.exception.BrokerSecondaryServerNotFoundException;
 
 @WebService(
 	    endpointInterface="pt.upa.broker.ws.BrokerPortType",
@@ -22,13 +23,15 @@ public class BrokerPort implements BrokerPortType {
 	//endpoint
 	private BrokerEndpointManager endpoint;	
 
-	public BrokerPort(BrokerEndpointManager endpoint) throws JAXRException {
+	public BrokerPort(BrokerEndpointManager endpoint) throws JAXRException, 
+			BrokerSecondaryServerNotFoundException {
 		this.endpoint = endpoint;
 		this.domain = new BrokerDomain(this.endpoint.getWsName(), this.endpoint.getUddiURL());
 	}
 	
 	//constructor used for unit testing
-	public BrokerPort(String serviceName, String uddiURL) throws JAXRException {
+	public BrokerPort(String serviceName, String uddiURL) throws JAXRException,
+			BrokerSecondaryServerNotFoundException {
 		this.domain = new BrokerDomain(serviceName, uddiURL);
 	}
 	
@@ -61,6 +64,11 @@ public class BrokerPort implements BrokerPortType {
 	@Override
 	public void clearTransports() {
 		domain.clearTransports();		
+	}
+
+	@Override
+	public void keepStateUpdated(TransportView transport, int failedNumber) {
+		domain.keepStateUpdated(transport, failedNumber);
 	}
 	
 }

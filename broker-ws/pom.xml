@@ -23,13 +23,13 @@
 
         <mainclass>pt.upa.broker.BrokerApplication</mainclass>
 		
-		<!-- Substitute server name append and number - redefine using -D option - e.g. mvn -Dws.sub=Sub -Dws.i=1 exec:java -->
+		<!-- Substitute server name append and port - redefine using -D option - e.g. mvn -Dws.sub=Sub -Dws.port=8090 exec:java -->
         <ws.sub></ws.sub>
-        <ws.i>0</ws.i>
+        <ws.port>8080</ws.port>
 
-        <ws.url>http://localhost:808${ws.i}/broker-ws/endpoint</ws.url>
+        <ws.url>http://localhost:${ws.port}/broker-ws/endpoint</ws.url>
 
-        <ws.name>UpaBroker${ws.sub}${ws.i}</ws.name>
+        <ws.name>UpaBroker${ws.sub}</ws.name>
         <uddi.url>http://localhost:9090</uddi.url>
     </properties>
 
@@ -64,6 +64,12 @@
 		<dependency>
             <groupId>pt.upa.a65</groupId>
             <artifactId>transporter-ws-cli</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- Broker WS Client -->
+		<dependency>
+            <groupId>pt.upa.a65</groupId>
+            <artifactId>broker-ws-cli</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

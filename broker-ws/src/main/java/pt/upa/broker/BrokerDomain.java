@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
+import pt.upa.broker.exception.BrokerSecondaryServerNotFoundException;
 import pt.upa.broker.ws.*;
 import pt.upa.transporter.ws.BadJobFault_Exception;
 import pt.upa.transporter.ws.BadLocationFault_Exception;
@@ -17,23 +18,33 @@ import pt.upa.transporter.ws.BadPriceFault_Exception;
 import pt.upa.transporter.ws.JobStateView;
 import pt.upa.transporter.ws.JobView;
 import pt.upa.transporter.ws.cli.TransporterClient;
+import pt.upa.broker.ws.cli.BrokerClient;
 
 /*
  * 
- * Implementation of Transporter logic and structures
+ * Implementation of Broker logic and structures
  *
  */
 public class BrokerDomain {
 	
 	private static final String MESSAGE_TO_UNKNOWNS = "Who is this?";
+	private static final String PRIMARY_SERVER_NAME = "UpaBroker";
 	
 	
 	private TreeMap<String, TransportView> transports; //String = Transport ID
-	private ArrayList<TransporterClient> transporters;
+	private ArrayList<TransporterClient> transporters;	
 	private String wsname; //Broker Name
 	private int failedNumber = 1; // Number attributed to transporter in FAILED state
 	private ArrayList<String> cities = new ArrayList<String>(); //All regions cities
 	private UDDINaming uddiNaming = null;
+	
+	private boolean isPrimaryServer = true;
+	private boolean replicationMode = true; /*if false, Broker will not sync its status
+	 											with a Secondary server. Before calling
+	 											keepStateUpdated(), we must always check
+	 											if this is true. */
+	private BrokerClient secondaryBroker = null;
+	private BrokerClient primaryBroker = null;
 
 	
 	public BrokerDomain(String wsname, String uddiURL) throws JAXRException {
@@ -42,6 +53,21 @@ public class BrokerDomain {
 		this.wsname = wsname;
 		this.uddiNaming = new UDDINaming(uddiURL);
 		initialiseCities();
+		
+		if(!wsname.equals(PRIMARY_SERVER_NAME)) { //TODO Secondary's wsname is still "UpaBroker". Why?
+			isPrimaryServer = false;
+			//TODO implement findPrimaryBroker() -- has a "while endpoint not found" logic
+		} else {
+			try {
+				findSecondaryBroker();
+			} catch (BrokerSecondaryServerNotFoundException e) {
+				System.out.println("Secondary Broker Server not found. "
+						+ "Please start Secondary Broker before starting the Primary.");
+				System.out.println("Starting " + wsname + " in \"No Replication\" mode.");
+				this.replicationMode = false; //if no Secondary servers are up, there's no replication
+			}
+		}
+			
 	}
 	
 
@@ -279,6 +305,50 @@ public class BrokerDomain {
 			}			
 			this.transporters = updatedTransporters;
 		} else this.transporters.clear();		
+	}
+	
+	
+	/*
+	 * 
+	 * SECONDARY SERVER FUNCTIONS BELOW 
+	 *
+	 */
+	
+	public void findSecondaryBroker() throws BrokerSecondaryServerNotFoundException, JAXRException {
+		String endpoint = null;
+		BrokerClient foundBroker = null;
+		try {
+			endpoint = uddiNaming.lookup("UpaBrokerSub");
+		} catch (JAXRException e) {
+			this.secondaryBroker = null;
+			throw new BrokerSecondaryServerNotFoundException("JAXRException "
+					+ "caught during lookup");
+		}
+		
+		if(endpoint == null) {
+			this.secondaryBroker = null;
+			throw new BrokerSecondaryServerNotFoundException("A null endpoint was returned");
+		}
+		
+		
+		foundBroker = new BrokerClient(endpoint);
+		
+				
+					
+		secondaryBroker = foundBroker;
+	}
+	
+	/**
+	 * Must be called if in Replication Mode whenever a "transport" is added
+	 * or modified on the Primary server.
+	 */
+	public void keepStateUpdated(TransportView transport, int failedNumber) { //TODO add message ID parameter
+		if(this.isPrimaryServer) {
+			secondaryBroker.keepStateUpdated(transport, this.failedNumber);
+		} else {
+			transports.put(transport.getId(), transport);
+			this.failedNumber = failedNumber;
+		}
 	}
 	
 }

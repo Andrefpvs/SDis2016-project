@@ -6,6 +6,7 @@ import javax.xml.registry.JAXRException;
 import javax.xml.ws.Endpoint;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
+import pt.upa.broker.exception.BrokerSecondaryServerNotFoundException;
 import pt.upa.broker.ws.*;
 
 /** Endpoint manager */
@@ -60,8 +61,9 @@ public class BrokerEndpointManager {
 	}
 
 	/** constructor with provided UDDI location, WS name, and WS URL 
-	 * @throws JAXRException */
-	public BrokerEndpointManager(String uddiURL, String wsName, String wsURL) throws JAXRException {
+	 * @throws JAXRException 
+	 * @throws BrokerSecondaryServerNotFoundException */
+	public BrokerEndpointManager(String uddiURL, String wsName, String wsURL) throws JAXRException, BrokerSecondaryServerNotFoundException {
 		this.uddiURL = uddiURL;
 		this.wsName = wsName;
 		this.wsURL = wsURL;

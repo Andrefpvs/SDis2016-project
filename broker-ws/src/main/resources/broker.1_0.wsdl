@@ -153,8 +153,28 @@
                     <xs:element name="id" type="xs:string" minOccurs="0" />
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="UnknownTransportFault" type="tns:UnknownTransportFault" />
-        
+            <xs:element name="UnknownTransportFault" type="tns:UnknownTransportFault" />       
+
+            <xs:element name="keepStateUpdated">
+            	<xs:complexType>
+            		<xs:sequence>
+
+            			<xs:element name="transport"
+            				type="tns:transportView">
+            			</xs:element>
+            			<xs:element name="failedNumber"
+            				type="xs:int">
+            			</xs:element>
+            		</xs:sequence>
+            	</xs:complexType>
+            </xs:element>
+            <xs:element name="keepStateUpdatedResponse">
+            	<xs:complexType>
+            		<xs:sequence>
+
+            		</xs:sequence>
+            	</xs:complexType>
+            </xs:element>
         </xs:schema>
     </types>
 
@@ -210,7 +230,13 @@
         <part name="fault" element="tns:UnknownTransportFault" />
     </message>
 
-    <!-- Port Type (Interface) -->
+    <!-- Port Type (Interface) -->
+    <message name="keepStateUpdatedRequest">
+    	<part name="parameters" element="tns:keepStateUpdated"></part>
+    </message>
+    <message name="keepStateUpdatedResponse">
+    	<part name="parameters" element="tns:keepStateUpdatedResponse"></part>
+    </message>
     <portType name="BrokerPortType">
 
         <operation name="ping">
@@ -265,6 +291,10 @@
             <output
                 wsam:Action="http://ws.broker.upa.pt/BrokerPort/clearTransportsResponse"
                 message="tns:clearTransportsResponse" />
+        </operation>
+        <operation name="keepStateUpdated">
+        	<input message="tns:keepStateUpdatedRequest"></input>
+        	<output message="tns:keepStateUpdatedResponse"></output>
         </operation>
     </portType>
 
@@ -321,6 +351,16 @@
         </operation>
 
         <operation name="listTransports">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+
+        <operation name="keepStateUpdated">
             <soap:operation soapAction="" />
             <input>
                 <soap:body use="literal" />
