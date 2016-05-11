@@ -29,6 +29,7 @@ public class BrokerDomain {
 	
 	private static final String MESSAGE_TO_UNKNOWNS = "Who is this?";
 	private static final String PRIMARY_SERVER_NAME = "UpaBroker";
+	private static final int PING_INTERVAL_TIME = 5000;
 	
 	
 	private TreeMap<String, TransportView> transports; //String = Transport ID
@@ -53,21 +54,11 @@ public class BrokerDomain {
 		this.uddiNaming = new UDDINaming(uddiURL);
 		initialiseCities();
 		
-		if(!wsname.equals(PRIMARY_SERVER_NAME)) { //TODO Secondary's wsname is still "UpaBroker". Why?
+		if(!wsname.equals(PRIMARY_SERVER_NAME)) {
 			isPrimaryServer = false;
 			findPrimaryBroker();
-			//TODO implement findPrimaryBroker() -- has a "while endpoint not found" logic
-		} else {
-			try {
-				findSecondaryBroker();
-			} catch (BrokerSecondaryServerNotFoundException e) {
-				System.out.println("Secondary Broker Server not found. "
-						+ "Please start Secondary Broker before starting the Primary.");
-				System.out.println("Starting " + wsname + " in \"No Replication\" mode.");
-				this.replicationMode = false; //if no Secondary servers are up, there's no replication
-			}
-		}
-			
+			new BrokerPingReminder(PING_INTERVAL_TIME, this);
+		}			
 	}
 	
 
@@ -196,6 +187,16 @@ public class BrokerDomain {
 		
 		transports.put(transport.getId(), transport);
 		
+		if(this.isPrimaryServer && this.replicationMode){
+			try {
+				findSecondaryBroker();
+				keepStateUpdated(transport, this.failedNumber);
+			} catch (BrokerSecondaryServerNotFoundException e) {
+				System.out.println("Secondary Server NOT FOUND!");
+				this.replicationMode = false;
+			}
+		}
+		
 		
 		return transport.getId();
 	}
@@ -228,6 +229,16 @@ public class BrokerDomain {
 
 		transports.put(id, transport);
 		
+		if(this.isPrimaryServer && this.replicationMode){
+			try {
+				findSecondaryBroker();
+				keepStateUpdated(transport, this.failedNumber);
+			} catch (BrokerSecondaryServerNotFoundException e) {
+				System.out.println("Secondary Server NOT FOUND!");
+				this.replicationMode = false;
+			}
+		}
+		
 		
 		return transport;
 	}
@@ -246,7 +257,17 @@ public class BrokerDomain {
 		updateTransporters();
 		for(TransporterClient client : transporters) {
 			client.clearJobs();
-		}		
+		}
+		
+		if(this.isPrimaryServer && this.replicationMode){
+			try {
+				findSecondaryBroker();
+				otherBroker.clearTransports();
+			} catch (BrokerSecondaryServerNotFoundException e) {
+				System.out.println("Secondary Server NOT FOUND!");
+				this.replicationMode = false;
+			}
+		}
 	}
 
 	/*
@@ -310,7 +331,7 @@ public class BrokerDomain {
 	
 	/*
 	 * 
-	 * SECONDARY SERVER FUNCTIONS BELOW 
+	 * REPLICATION HELPER FUNCTIONS BELOW 
 	 *
 	 */
 	
@@ -318,6 +339,7 @@ public class BrokerDomain {
 	public void findPrimaryBroker() throws JAXRException {
 		String endpoint = null;
 		BrokerClient foundBroker = null;
+		System.out.println("Please start the Primary Broker server now.");
 		while(endpoint == null){
                     try {
                             endpoint = uddiNaming.lookup("UpaBroker");
@@ -328,15 +350,16 @@ public class BrokerDomain {
                 }
 		
 		
-		foundBroker = new BrokerClient(endpoint);
-		
+		foundBroker = new BrokerClient(endpoint);		
 				
 					
 		this.otherBroker = foundBroker;
 	} 
 	 
 	
-	public void findSecondaryBroker() throws BrokerSecondaryServerNotFoundException, JAXRException {
+	public void findSecondaryBroker() throws BrokerSecondaryServerNotFoundException {
+		if (this.otherBroker != null) return;
+		
 		String endpoint = null;
 		BrokerClient foundBroker = null;
 		try {
@@ -368,8 +391,25 @@ public class BrokerDomain {
 		if(this.isPrimaryServer) {
 			otherBroker.keepStateUpdated(transport, this.failedNumber);
 		} else {
+			System.out.println("Received state update from Primary. Updating...");
 			transports.put(transport.getId(), transport);
 			this.failedNumber = failedNumber;
+		}
+	}
+	
+	public void pingPrimary() {
+		if(this.isPrimaryServer) return;
+		
+		String response = otherBroker.ping(wsname);
+		if(response != null) {
+			System.out.println("Primary is alive and said: " + response);
+			new BrokerPingReminder(PING_INTERVAL_TIME, this);
+		} else {
+			//Takes over as primary
+			System.out.println("Primary Broker is down!");
+			System.out.println(wsname + " taking over as primary Broker.");
+			this.isPrimaryServer = true;
+			replicationMode = false;
 		}
 	}
 	

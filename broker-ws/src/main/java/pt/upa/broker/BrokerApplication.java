@@ -28,7 +28,6 @@ public class BrokerApplication {
 			wsURL = args[2];
 			endpoint = new BrokerEndpointManager(uddiURL, wsName, wsURL);
 			endpoint.setVerbose(true);
-			System.out.println("Cheguei aqui");
 		}
 
 		try {

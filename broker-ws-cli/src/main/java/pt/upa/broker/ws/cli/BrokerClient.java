@@ -22,6 +22,9 @@ import pt.upa.broker.ws.UnknownLocationFault_Exception;
 import pt.upa.broker.ws.UnknownTransportFault_Exception;
 
 public class BrokerClient implements BrokerPortType{
+	
+	private static final String SECONDARY_SERVER_NAME = "UpaBrokerSub";
+
 
     BindingProvider bindingProvider;
     Map<String, Object> requestContext;
@@ -63,7 +66,7 @@ public class BrokerClient implements BrokerPortType{
 		bindingProvider = (BindingProvider) port;
 		requestContext = bindingProvider.getRequestContext();
 		
-		int connectionTimeout = 1000;
+		int connectionTimeout = 5000;
 		// The connection timeout property has different names in different
 		// versions of JAX-WS
 		// Set them all to avoid compatibility issues
@@ -77,7 +80,7 @@ public class BrokerClient implements BrokerPortType{
 			requestContext.put(propName, connectionTimeout);
 		System.out.printf("Set connection timeout to %d milliseconds%n", connectionTimeout);
 
-		int receiveTimeout = 2000;
+		int receiveTimeout = 5000;
 		// The receive timeout property has alternative names
 		// Again, set them all to avoid compability issues
 		final List<String> RECV_TIME_PROPS = new ArrayList<String>();
@@ -101,7 +104,7 @@ public class BrokerClient implements BrokerPortType{
 		bindingProvider = (BindingProvider) port;
 		requestContext = bindingProvider.getRequestContext();
 		
-		int connectionTimeout = 180000; //TODO Set appropriate values
+		int connectionTimeout = 5000; //TODO Set appropriate values
 		// The connection timeout property has different names in different
 		// versions of JAX-WS
 		// Set them all to avoid compatibility issues
@@ -115,7 +118,7 @@ public class BrokerClient implements BrokerPortType{
 			requestContext.put(propName, connectionTimeout);
 		System.out.printf("Set connection timeout to %d milliseconds%n", connectionTimeout);
 
-		int receiveTimeout = 180000; //TODO Set appropriate values
+		int receiveTimeout = 5000; //TODO Set appropriate values
 		// The receive timeout property has alternative names
 		// Again, set them all to avoid compability issues
 		final List<String> RECV_TIME_PROPS = new ArrayList<String>();
@@ -182,12 +185,18 @@ public class BrokerClient implements BrokerPortType{
             result = port.ping(name);
             
         } catch(WebServiceException wse) {
-            System.out.println("Caught: " + wse);
+            //System.out.println("Caught: " + wse);
             Throwable cause = wse.getCause();
             if (cause != null && cause instanceof SocketTimeoutException) {
-                System.out.println("The cause was a timeout exception: " + cause);
-                System.out.println("Main Broker Server was down. "
-                		+ "Resending to backup server..." + cause);
+                //System.out.println("The cause was a timeout exception: " + cause);
+                System.out.println("Frontend says: \"Main Broker Server was down.\" ");
+                wsName = SECONDARY_SERVER_NAME;
+                try {
+					uddiLookup();
+				} catch (BrokerClientUDDIException e) {
+					System.err.println("But there was no Secondary server...");
+				}
+                createStub();
             }
         }
 		return result;
@@ -197,22 +206,132 @@ public class BrokerClient implements BrokerPortType{
 	public String requestTransport(String origin, String destination, int price)
 			throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception,
 			UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception {
-		return port.requestTransport(origin, destination, price);
+		
+		String result = null;
+		try {
+
+			result = port.requestTransport(origin, destination, price);
+
+		} catch (WebServiceException wse) {
+			// System.out.println("Caught: " + wse);
+			Throwable cause = wse.getCause();
+			if (cause != null && cause instanceof SocketTimeoutException) {
+				// System.out.println("The cause was a timeout exception: " +
+				// cause);
+				System.out.println("Main Broker Server was down. " + "Resending to backup server..." + cause);
+				wsName = SECONDARY_SERVER_NAME;
+				try {
+					uddiLookup();
+				} catch (BrokerClientUDDIException e) {
+					System.err.println("But there was no Secondary server...");
+				}
+				createStub();
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				port.requestTransport(origin, destination, price);
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
-		return port.viewTransport(id);
+		
+		TransportView result = null;
+		try {
+
+			result = port.viewTransport(id);
+
+		} catch (WebServiceException wse) {
+			// System.out.println("Caught: " + wse);
+			Throwable cause = wse.getCause();
+			if (cause != null && cause instanceof SocketTimeoutException) {
+				// System.out.println("The cause was a timeout exception: " +
+				// cause);
+				System.out.println("Main Broker Server was down. " + "Resending to backup server..." + cause);
+				wsName = SECONDARY_SERVER_NAME;
+				try {
+					uddiLookup();
+				} catch (BrokerClientUDDIException e) {
+					System.err.println("But there was no Secondary server...");
+				}
+				createStub();
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				port.viewTransport(id);
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public List<TransportView> listTransports() {
-		return port.listTransports();
+
+		List<TransportView> result = null;
+		try {
+
+			result = port.listTransports();
+
+		} catch (WebServiceException wse) {
+			// System.out.println("Caught: " + wse);
+			Throwable cause = wse.getCause();
+			if (cause != null && cause instanceof SocketTimeoutException) {
+				// System.out.println("The cause was a timeout exception: " +
+				// cause);
+				System.out.println("Main Broker Server was down. " + "Resending to backup server..." + cause);
+				wsName = SECONDARY_SERVER_NAME;
+				try {
+					uddiLookup();
+				} catch (BrokerClientUDDIException e) {
+					System.err.println("But there was no Secondary server...");
+				}
+				createStub();
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				port.listTransports();
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public void clearTransports() {
-		port.clearTransports();		
+		
+		try {
+
+			port.clearTransports();
+
+		} catch (WebServiceException wse) {
+			// System.out.println("Caught: " + wse);
+			Throwable cause = wse.getCause();
+			if (cause != null && cause instanceof SocketTimeoutException) {
+				// System.out.println("The cause was a timeout exception: " +
+				// cause);
+				System.out.println("Main Broker Server was down. " + "Resending to backup server..." + cause);
+				wsName = SECONDARY_SERVER_NAME;
+				try {
+					uddiLookup();
+				} catch (BrokerClientUDDIException e) {
+					System.err.println("But there was no Secondary server...");
+				}
+				createStub();
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				port.clearTransports();
+			}
+		}
 	}
 	
 	@Override
