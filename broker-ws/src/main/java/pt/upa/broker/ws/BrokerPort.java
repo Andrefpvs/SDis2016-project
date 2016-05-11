@@ -9,7 +9,7 @@ import pt.upa.broker.exception.BrokerSecondaryServerNotFoundException;
 
 @WebService(
 	    endpointInterface="pt.upa.broker.ws.BrokerPortType",
-	    wsdlLocation="broker.1_0.wsdl",
+	    wsdlLocation="broker.2_0.wsdl",
 	    name="UpaBroker",
 	    portName="BrokerPort",
 	    targetNamespace="http://ws.broker.upa.pt/",

@@ -1,4 +1,4 @@
-<?xml version="2.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
     WSDL contract for a UPA Broker service
@@ -230,7 +230,11 @@
         <part name="fault" element="tns:UnknownTransportFault" />
     </message>
 
-    <!-- Port Type (Interface) -->
+    <!-- Port Type (Interface) -->
+
+
+
+
     <message name="keepStateUpdatedRequest">
     	<part name="parameters" element="tns:keepStateUpdated"></part>
     </message>
@@ -291,7 +295,8 @@
             <output
                 wsam:Action="http://ws.broker.upa.pt/BrokerPort/clearTransportsResponse"
                 message="tns:clearTransportsResponse" />
-        </operation>
+        </operation>
+
         <operation name="keepStateUpdated">
         	<input message="tns:keepStateUpdatedRequest"></input>
         	<output message="tns:keepStateUpdatedResponse"></output>

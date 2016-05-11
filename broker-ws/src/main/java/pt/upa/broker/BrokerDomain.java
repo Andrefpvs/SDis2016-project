@@ -43,8 +43,7 @@ public class BrokerDomain {
 	 											with a Secondary server. Before calling
 	 											keepStateUpdated(), we must always check
 	 											if this is true. */
-	private BrokerClient secondaryBroker = null;
-	private BrokerClient primaryBroker = null;
+	private BrokerClient otherBroker = null;
 
 	
 	public BrokerDomain(String wsname, String uddiURL) throws JAXRException {
@@ -56,6 +55,7 @@ public class BrokerDomain {
 		
 		if(!wsname.equals(PRIMARY_SERVER_NAME)) { //TODO Secondary's wsname is still "UpaBroker". Why?
 			isPrimaryServer = false;
+			findPrimaryBroker();
 			//TODO implement findPrimaryBroker() -- has a "while endpoint not found" logic
 		} else {
 			try {
@@ -314,19 +314,41 @@ public class BrokerDomain {
 	 *
 	 */
 	
+	
+	public void findPrimaryBroker() throws JAXRException {
+		String endpoint = null;
+		BrokerClient foundBroker = null;
+		while(endpoint == null){
+                    try {
+                            endpoint = uddiNaming.lookup("UpaBroker");
+                    } catch (JAXRException e) {
+                            this.otherBroker = null;
+			
+                    }
+                }
+		
+		
+		foundBroker = new BrokerClient(endpoint);
+		
+				
+					
+		this.otherBroker = foundBroker;
+	} 
+	 
+	
 	public void findSecondaryBroker() throws BrokerSecondaryServerNotFoundException, JAXRException {
 		String endpoint = null;
 		BrokerClient foundBroker = null;
 		try {
 			endpoint = uddiNaming.lookup("UpaBrokerSub");
 		} catch (JAXRException e) {
-			this.secondaryBroker = null;
+			this.otherBroker = null;
 			throw new BrokerSecondaryServerNotFoundException("JAXRException "
 					+ "caught during lookup");
 		}
 		
 		if(endpoint == null) {
-			this.secondaryBroker = null;
+			this.otherBroker = null;
 			throw new BrokerSecondaryServerNotFoundException("A null endpoint was returned");
 		}
 		
@@ -335,7 +357,7 @@ public class BrokerDomain {
 		
 				
 					
-		secondaryBroker = foundBroker;
+		this.otherBroker = foundBroker;
 	}
 	
 	/**
@@ -344,7 +366,7 @@ public class BrokerDomain {
 	 */
 	public void keepStateUpdated(TransportView transport, int failedNumber) { //TODO add message ID parameter
 		if(this.isPrimaryServer) {
-			secondaryBroker.keepStateUpdated(transport, this.failedNumber);
+			otherBroker.keepStateUpdated(transport, this.failedNumber);
 		} else {
 			transports.put(transport.getId(), transport);
 			this.failedNumber = failedNumber;
