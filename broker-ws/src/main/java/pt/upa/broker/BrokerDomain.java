@@ -8,6 +8,8 @@ import javax.xml.registry.JAXRException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.upa.broker.exception.BrokerSecondaryServerNotFoundException;
@@ -29,7 +31,8 @@ public class BrokerDomain {
 	
 	private static final String MESSAGE_TO_UNKNOWNS = "Who is this?";
 	private static final String PRIMARY_SERVER_NAME = "UpaBroker";
-	private static final int PING_INTERVAL_TIME = 2000;
+	private static final String SECONDARY_SERVER_NAME = "UpaBrokerSub";
+	private static final long PING_INTERVAL_TIME = 3000;
 	
 	
 	private TreeMap<String, TransportView> transports; //String = Transport ID
@@ -39,11 +42,17 @@ public class BrokerDomain {
 	private ArrayList<String> cities = new ArrayList<String>(); //All regions cities
 	private UDDINaming uddiNaming = null;
 	
+	private boolean processedLifeSign = false;
+	private boolean takingOverPrimary = false;
 	private boolean isPrimaryServer = true;
 	private boolean replicationMode = true; /*if false, Broker will not sync its status
 	 											with a Secondary server. Before calling
 	 											keepStateUpdated(), we must always check
 	 											if this is true. */
+	
+	private Timer lifeSignSender = new Timer();
+	private Timer statusDecider = new Timer();
+
 	private BrokerClient otherBroker = null;
 
 	
@@ -55,11 +64,21 @@ public class BrokerDomain {
 		initialiseCities();
 		
 		if(!wsname.equals(PRIMARY_SERVER_NAME)) {
-			this.uddiNaming.unbind(PRIMARY_SERVER_NAME);
+			//this.uddiNaming.unbind(PRIMARY_SERVER_NAME);
 			isPrimaryServer = false;
-			findPrimaryBroker();
-			new BrokerPingReminder(PING_INTERVAL_TIME, this);
-		}			
+			//findPrimaryBroker();
+			//new BrokerPingReminder(PING_INTERVAL_TIME, this);
+		} else {
+			try {
+				findSecondaryBroker();
+				lifeSignSender.scheduleAtFixedRate(new TimerTask(){
+  					public void run() {otherBroker.sendLifeSign();}
+  						}, PING_INTERVAL_TIME, PING_INTERVAL_TIME);
+			} catch (BrokerSecondaryServerNotFoundException e) {
+				System.out.println("Secondary Broker not found. Starting in \"No Replication\" mode");
+				this.replicationMode = false;
+			}
+		}
 	}
 	
 
@@ -342,17 +361,19 @@ public class BrokerDomain {
 
 		String endpoint = null;
 		BrokerClient foundBroker = null;
-		System.out.println("Please start the Primary Broker server now.");
-		while(endpoint == null){
-			try {
-				endpoint = uddiNaming.lookup("UpaBroker");
-			} catch (JAXRException e) {
-				this.otherBroker = null;
-			}
-		}
+		//System.out.println("Please start the Primary Broker server now.");
+		try {
+			endpoint = uddiNaming.lookup(PRIMARY_SERVER_NAME);
+		} catch (JAXRException e) {
+			this.otherBroker = null;
+		}		
 		
-		foundBroker = new BrokerClient(endpoint);		
-				
+		if(endpoint == null) {
+			this.otherBroker = null;
+			System.out.println("Primary Broker not found!");
+		}
+
+		foundBroker = new BrokerClient(endpoint);						
 					
 		this.otherBroker = foundBroker;
 	} 
@@ -363,18 +384,15 @@ public class BrokerDomain {
 		
 		String endpoint = null;
 		BrokerClient foundBroker = null;
-		try {
-			endpoint = uddiNaming.lookup("UpaBrokerSub");
-		} catch (JAXRException e) {
-			this.otherBroker = null;
-			throw new BrokerSecondaryServerNotFoundException("JAXRException "
-					+ "caught during lookup");
-		}
-		
-		if(endpoint == null) {
-			this.otherBroker = null;
-			throw new BrokerSecondaryServerNotFoundException("A null endpoint was returned");
-		}		
+		System.out.println("Please start the Secondary Broker server now.");
+		while (endpoint == null) {
+			try {
+				endpoint = uddiNaming.lookup(SECONDARY_SERVER_NAME);
+			} catch (JAXRException e) {
+				this.otherBroker = null;
+				throw new BrokerSecondaryServerNotFoundException("JAXRException " + "caught during lookup");
+			}
+		}				
 		
 		foundBroker = new BrokerClient(endpoint);				
 					
@@ -385,7 +403,7 @@ public class BrokerDomain {
 	 * Must be called if in Replication Mode whenever a "transport" is added
 	 * or modified on the Primary server.
 	 */
-	public void keepStateUpdated(TransportView transport, int failedNumber) { //TODO add message ID parameter
+	public void keepStateUpdated(TransportView transport, int failedNumber) { //TODO add message ID behaviour
 		if(this.isPrimaryServer) {
 			otherBroker.keepStateUpdated(transport, this.failedNumber);
 		} else {
@@ -396,13 +414,53 @@ public class BrokerDomain {
 		}
 	}
 	
+	public void sendLifeSign() {
+		if(this.isPrimaryServer) return;
+
+		if(!processedLifeSign) {
+			statusDecider.scheduleAtFixedRate(new TimerTask(){
+			      					public void run() {secondaryStatusUpdate();}
+			      					}, PING_INTERVAL_TIME, PING_INTERVAL_TIME);
+		}
+		processedLifeSign = true;
+		takingOverPrimary = false;
+		System.out.println("Primary Broker sent a sign of life!");
+	}
+	
+	public void secondaryStatusUpdate() {
+		if(takingOverPrimary) {
+			statusDecider.cancel();
+			System.out.println("Primary Broker is down!");
+			System.out.println(this.wsname + " taking over as primary Broker...");
+			String endpoint;
+			try {
+				endpoint = uddiNaming.lookup(this.wsname);
+				//print endpoint?
+				this.isPrimaryServer = true;
+				replicationMode = false;
+				uddiNaming.unbind(this.wsname);
+				this.wsname = PRIMARY_SERVER_NAME;
+				uddiNaming.rebind(wsname, endpoint);
+				System.out.println("Took over.");
+			} catch (JAXRException e) {
+				System.out.println("Error in Secondary takeover rebind.");
+				e.printStackTrace();
+			}
+			
+		} else takingOverPrimary = true; //if we don't get a new life signal, this will remain true
+	}
+	
+	/**
+	 * @deprecated Use sendLifeSign() instead
+	 */
+	
 	public void pingPrimary() {
 		if(this.isPrimaryServer) return;
 		
 		String response = otherBroker.ping(wsname);
 		if(response != null) {
 			System.out.println("Primary is alive and said: " + response);
-			new BrokerPingReminder(PING_INTERVAL_TIME, this);
+			//new BrokerPingReminder(PING_INTERVAL_TIME, this);
 		} else {
 			//Takes over as primary
 			System.out.println("Primary Broker is down!");
@@ -410,7 +468,7 @@ public class BrokerDomain {
 			String endpoint;
 			try {
 				endpoint = uddiNaming.lookup(wsname);
-				//print endpoint
+				//print endpoint?
 				this.isPrimaryServer = true;
 				replicationMode = false;
 				uddiNaming.unbind(wsname);

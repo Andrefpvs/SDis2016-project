@@ -70,5 +70,10 @@ public class BrokerPort implements BrokerPortType {
 	public void keepStateUpdated(TransportView transport, int failedNumber) {
 		domain.keepStateUpdated(transport, failedNumber);
 	}
+
+	@Override
+	public void sendLifeSign() {
+		domain.sendLifeSign();
+	}
 	
 }

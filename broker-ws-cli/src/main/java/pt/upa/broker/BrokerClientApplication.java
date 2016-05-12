@@ -46,7 +46,15 @@ public class BrokerClientApplication {
 			testResponse = client.requestTransport("Lisboa", "Leiria", 50);
 			System.out.println(testResponse);
 			System.out.println("Got from: " + client.getWsURL());
-			Thread.sleep(6000);
+			Thread.sleep(3000);
+			testResponse = client.requestTransport("Lisboa", "Leiria", 49);
+			System.out.println(testResponse);
+			System.out.println("Got from: " + client.getWsURL());
+			Thread.sleep(3000);
+			testResponse = client.ping("BrokerClientApplication");
+			System.out.println(testResponse);
+			System.out.println("Got from: " + client.getWsURL());
+			Thread.sleep(3000);
 		}
 
 	}

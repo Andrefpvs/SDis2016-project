@@ -101,7 +101,7 @@ public class BrokerClient implements BrokerPortType{
 		bindingProvider = (BindingProvider) port;
 		requestContext = bindingProvider.getRequestContext();
 		
-		int connectionTimeout = 1000; //TODO Set appropriate values
+		int connectionTimeout = 1000;
 		// The connection timeout property has different names in different
 		// versions of JAX-WS
 		// Set them all to avoid compatibility issues
@@ -115,7 +115,7 @@ public class BrokerClient implements BrokerPortType{
 			requestContext.put(propName, connectionTimeout);
 		System.out.printf("Set connection timeout to %d milliseconds%n", connectionTimeout);
 
-		int receiveTimeout = 5000; //TODO Set appropriate values
+		int receiveTimeout = 5000;
 		// The receive timeout property has alternative names
 		// Again, set them all to avoid compability issues
 		final List<String> RECV_TIME_PROPS = new ArrayList<String>();
@@ -181,10 +181,30 @@ public class BrokerClient implements BrokerPortType{
         	
             result = port.ping(name);
             
-        } catch(WebServiceException wse) {
-        	result = null;
-            
-        }
+        } catch (WebServiceException wse) {
+			// System.out.println("Caught: " + wse);
+			Throwable cause = wse.getCause();
+			if (cause != null && cause instanceof SocketTimeoutException) {
+				// System.out.println("The cause was a timeout exception: " +
+				// cause);
+				System.out.println("Main Broker Server was down. Cause: "  + cause);
+				this.setVerbose(true);
+				try {
+					Thread.sleep(15000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				try {
+					uddiLookup();
+				} catch (BrokerClientUDDIException e) {
+					System.err.println("But there was no Secondary server...");
+				}
+				createStub();
+				
+				System.out.println("Resending request...");
+	            result = port.ping(name);
+			}
+		}
 		return result;
 	}
 
@@ -204,10 +224,10 @@ public class BrokerClient implements BrokerPortType{
 			if (cause != null && cause instanceof SocketTimeoutException) {
 				// System.out.println("The cause was a timeout exception: " +
 				// cause);
-				System.out.println("Main Broker Server was down. "  + cause);
+				System.out.println("Main Broker Server was down. Cause: "  + cause);
 				this.setVerbose(true);
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(15000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -218,7 +238,7 @@ public class BrokerClient implements BrokerPortType{
 				}
 				createStub();
 				
-				System.out.println("Resending to backup server...");
+				System.out.println("Resending request...");
 				result = port.requestTransport(origin, destination, price);
 			}
 		}
@@ -239,9 +259,10 @@ public class BrokerClient implements BrokerPortType{
 			if (cause != null && cause instanceof SocketTimeoutException) {
 				// System.out.println("The cause was a timeout exception: " +
 				// cause);
-				System.out.println("Main Broker Server was down. " + "Resending to backup server..." + cause);
+				System.out.println("Main Broker Server was down. Cause: "  + cause);
+				this.setVerbose(true);
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(15000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -250,7 +271,9 @@ public class BrokerClient implements BrokerPortType{
 				} catch (BrokerClientUDDIException e) {
 					System.err.println("But there was no Secondary server...");
 				}
-				createStub();				
+				createStub();
+				
+				System.out.println("Resending request...");
 				result = port.viewTransport(id);
 			}
 		}
@@ -271,9 +294,10 @@ public class BrokerClient implements BrokerPortType{
 			if (cause != null && cause instanceof SocketTimeoutException) {
 				// System.out.println("The cause was a timeout exception: " +
 				// cause);
-				System.out.println("Main Broker Server was down. " + "Resending to backup server..." + cause);
+				System.out.println("Main Broker Server was down. Cause: "  + cause);
+				this.setVerbose(true);
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(15000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -283,6 +307,8 @@ public class BrokerClient implements BrokerPortType{
 					System.err.println("But there was no Secondary server...");
 				}
 				createStub();
+				
+				System.out.println("Resending request...");
 				result = port.listTransports();
 			}
 		}
@@ -302,9 +328,10 @@ public class BrokerClient implements BrokerPortType{
 			if (cause != null && cause instanceof SocketTimeoutException) {
 				// System.out.println("The cause was a timeout exception: " +
 				// cause);
-				System.out.println("Main Broker Server was down. " + "Resending to backup server..." + cause);
+				System.out.println("Main Broker Server was down. Cause: "  + cause);
+				this.setVerbose(true);
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(15000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -314,6 +341,8 @@ public class BrokerClient implements BrokerPortType{
 					System.err.println("But there was no Secondary server...");
 				}
 				createStub();
+				
+				System.out.println("Resending request...");
 				port.clearTransports();
 			}
 		}
@@ -322,6 +351,11 @@ public class BrokerClient implements BrokerPortType{
 	@Override
 	public void keepStateUpdated(TransportView transport, int failedNumber) {
 		port.keepStateUpdated(transport, failedNumber);
+	}
+
+	@Override
+	public void sendLifeSign() {
+		port.sendLifeSign();
 	}
 
 }
