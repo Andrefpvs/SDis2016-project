@@ -22,5 +22,5 @@ target/
 # jUDDI database activity record (Derby) #
 derby.log
 
-
+# UNIX directory files
 .directory
