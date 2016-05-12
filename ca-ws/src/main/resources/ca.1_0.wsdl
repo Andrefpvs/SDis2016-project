@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    WSDL contract for a CA service
+
+    This WSDL defines the operations provided by the Web Service
+    and should not be modified.
+
+    For more information, consult sections
+    wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
+-->
+
+<definitions
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+    xmlns:tns="http://ws.ca.upa.pt/"
+    targetNamespace="http://ws.ca.upa.pt/" 
+    name="CAWebService">
+
+    <!-- Data type definitions -->
+    <types>
+        <xs:schema version="1.0"
+            targetNamespace="http://ws.ca.upa.pt/">
+        
+		
+		<!--  SEE HERE complexType Example
+            <xs:complexType name="transportView">
+                <xs:sequence>
+                    <xs:element name="id" type="xs:string" minOccurs="0" />
+                    <xs:element name="origin" type="xs:string" minOccurs="0" />
+                    <xs:element name="destination" type="xs:string" minOccurs="0" />
+                    <xs:element name="price" type="xs:int" minOccurs="0" />
+                    <xs:element name="transporterCompany" type="xs:string" minOccurs="0" />
+                    <xs:element name="state" type="tns:transportStateView" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+        
+		-->        
+        
+            <xs:complexType name="ping">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ping" type="tns:ping" />
+        
+            <xs:complexType name="pingResponse">
+                <xs:sequence>
+                    <xs:element name="return" type="xs:string" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="pingResponse" type="tns:pingResponse" /> 
+			
+			
+			
+			
+        
+            <xs:complexType name="UnknownLocationFault">
+                <xs:sequence>
+                    <xs:element name="location" type="xs:string" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="UnknownLocationFault" type="tns:UnknownLocationFault" />
+
+			
+			
+			
+			
+        </xs:schema>
+    </types>
+
+    <!--  Messages (use elements defined in the schema) -->
+    <message name="ping">
+        <part name="parameters" element="tns:ping" />
+    </message>
+    <message name="pingResponse">
+        <part name="parameters" element="tns:pingResponse" />
+    </message>
+	
+
+    <message name="UnknownLocationFault">
+        <part name="fault" element="tns:UnknownLocationFault" />
+    </message>
+	
+
+    <!-- Port Type (Interface) -->	
+
+	<portType name="CAPortType">
+
+        <operation name="ping">
+            <input wsam:Action="http://ws.ca.upa.pt/CAPort/pingRequest"
+                message="tns:ping" />
+            <output wsam:Action="http://ws.ca.upa.pt/CAPort/pingResponse"
+                message="tns:pingResponse" />
+        </operation>
+
+		
+		<!-- SEE HERE FOR FAULT USAGE EXAMPLE
+        <operation name="requestTransport">
+            <input
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/requestTransportRequest"
+                message="tns:requestTransport" />
+            <output
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/requestTransportResponse"
+                message="tns:requestTransportResponse" />
+            <fault message="tns:UnknownLocationFault" name="UnknownLocationFault"
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/requestTransport/Fault/UnknownLocationFault" />
+            <fault message="tns:InvalidPriceFault" name="InvalidPriceFault"
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/requestTransport/Fault/InvalidPriceFault" />
+            <fault message="tns:UnavailableTransportFault" name="UnavailableTransportFault"
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/requestTransport/Fault/UnavailableTransportFault" />
+            <fault message="tns:UnavailableTransportPriceFault" name="UnavailableTransportPriceFault"
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/requestTransport/Fault/UnavailableTransportPriceFault" />
+        </operation>
+		-->
+
+	</portType>
+	
+    <!-- SOAP/HTTP Binding -->
+    <binding name="CAPortSoapHttpBinding" type="tns:CAPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+            style="document" />
+
+        <operation name="ping">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+
+		
+		<!-- EXAMPLE IF HAS FAULTS
+        <operation name="requestTransport">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="UnknownLocationFault">
+                <soap:fault name="UnknownLocationFault" use="literal" />
+            </fault>
+            <fault name="InvalidPriceFault">
+                <soap:fault name="InvalidPriceFault" use="literal" />
+            </fault>
+            <fault name="UnavailableTransportFault">
+                <soap:fault name="UnavailableTransportFault"
+                    use="literal" />
+            </fault>
+            <fault name="UnavailableTransportPriceFault">
+                <soap:fault name="UnavailableTransportPriceFault"
+                    use="literal" />
+            </fault>
+        </operation>
+		-->
+
+    </binding>
+
+    <service name="CAService">
+        <port name="CAPort" binding="tns:CAPortSoapHttpBinding">
+            <soap:address location="http://host:port/ca-ws/endpoint" />
+        </port>
+    </service>
+
+</definitions>
