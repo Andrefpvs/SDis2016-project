@@ -23,7 +23,7 @@ Repositório:
 **Antes de continuar com os passos seguintes, é importante apagar a base de dados local do JUDDI, caso exista:**
 ```
 shutdown.bat
-> apagar manualmente a pasta "target" gerada pelo JUDDI em execuções anteriores
+> apagar manualmente a pasta "target" e ficheiro "derby.log", gerados pelo JUDDI em execuções anteriores
 ```
 
 [1] Iniciar servidores de apoio
