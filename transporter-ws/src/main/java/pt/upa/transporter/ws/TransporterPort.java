@@ -2,6 +2,7 @@ package pt.upa.transporter.ws;
 
 import java.util.List;
 import javax.jws.WebService;
+import javax.jws.HandlerChain;
 
 import pt.upa.transporter.*;
 
@@ -13,6 +14,7 @@ import pt.upa.transporter.*;
 	    targetNamespace="http://ws.transporter.upa.pt/",
 	    serviceName="TransporterService"
 )
+@HandlerChain(file="/handler-chain.xml")
 
 public class TransporterPort implements TransporterPortType {
 	
