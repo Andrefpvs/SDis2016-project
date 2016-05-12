@@ -29,7 +29,7 @@ public class BrokerDomain {
 	
 	private static final String MESSAGE_TO_UNKNOWNS = "Who is this?";
 	private static final String PRIMARY_SERVER_NAME = "UpaBroker";
-	private static final int PING_INTERVAL_TIME = 5000;
+	private static final int PING_INTERVAL_TIME = 2000;
 	
 	
 	private TreeMap<String, TransportView> transports; //String = Transport ID
@@ -55,6 +55,7 @@ public class BrokerDomain {
 		initialiseCities();
 		
 		if(!wsname.equals(PRIMARY_SERVER_NAME)) {
+			this.uddiNaming.unbind(PRIMARY_SERVER_NAME);
 			isPrimaryServer = false;
 			findPrimaryBroker();
 			new BrokerPingReminder(PING_INTERVAL_TIME, this);
@@ -337,18 +338,18 @@ public class BrokerDomain {
 	
 	
 	public void findPrimaryBroker() throws JAXRException {
+		if (this.otherBroker != null) return;
+
 		String endpoint = null;
 		BrokerClient foundBroker = null;
 		System.out.println("Please start the Primary Broker server now.");
 		while(endpoint == null){
-                    try {
-                            endpoint = uddiNaming.lookup("UpaBroker");
-                    } catch (JAXRException e) {
-                            this.otherBroker = null;
-			
-                    }
-                }
-		
+			try {
+				endpoint = uddiNaming.lookup("UpaBroker");
+			} catch (JAXRException e) {
+				this.otherBroker = null;
+			}
+		}
 		
 		foundBroker = new BrokerClient(endpoint);		
 				
@@ -373,12 +374,9 @@ public class BrokerDomain {
 		if(endpoint == null) {
 			this.otherBroker = null;
 			throw new BrokerSecondaryServerNotFoundException("A null endpoint was returned");
-		}
+		}		
 		
-		
-		foundBroker = new BrokerClient(endpoint);
-		
-				
+		foundBroker = new BrokerClient(endpoint);				
 					
 		this.otherBroker = foundBroker;
 	}
@@ -394,6 +392,7 @@ public class BrokerDomain {
 			System.out.println("Received state update from Primary. Updating...");
 			transports.put(transport.getId(), transport);
 			this.failedNumber = failedNumber;
+			System.out.println("Updated.");
 		}
 	}
 	
@@ -407,9 +406,22 @@ public class BrokerDomain {
 		} else {
 			//Takes over as primary
 			System.out.println("Primary Broker is down!");
-			System.out.println(wsname + " taking over as primary Broker.");
-			this.isPrimaryServer = true;
-			replicationMode = false;
+			System.out.println(wsname + " taking over as primary Broker...");
+			String endpoint;
+			try {
+				endpoint = uddiNaming.lookup(wsname);
+				//print endpoint
+				this.isPrimaryServer = true;
+				replicationMode = false;
+				uddiNaming.unbind(wsname);
+				wsname = PRIMARY_SERVER_NAME;
+				uddiNaming.rebind(wsname, endpoint);
+				System.out.println("Took over.");
+			} catch (JAXRException e) {
+				System.out.println("Error in Secondary takeover rebind.");
+				e.printStackTrace();
+			}
+			
 		}
 	}
 	
