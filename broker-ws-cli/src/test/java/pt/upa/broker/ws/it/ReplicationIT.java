@@ -58,7 +58,7 @@ public class ReplicationIT extends BaseBrokerIT {
 		assertNotEquals(TransportStateView.BOOKED, transport.getState());
 	}
     
-    /**
+	/**
 	 * Test that after the Primary Broker goes down, the Client's FrontEnd
 	 * obtains the Secondary's endpoint when querying UDDI for the
 	 * Primary's name.
