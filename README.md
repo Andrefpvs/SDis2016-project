@@ -28,7 +28,7 @@ shutdown.bat
 
 [1] Iniciar servidores de apoio
 
-JUDDI:
+**JUDDI**:
 ```
 startup.bat
 ```
@@ -46,12 +46,12 @@ cd SD1
 [3] Obter código fonte do projeto (versão entregue)
 
 ```
-git clone -b SD_R1 https://github.com/tecnico-distsys/A_65-project
+git clone -b SD_R2 https://github.com/tecnico-distsys/A_65-project
 cd A_65-project
 ```
-*A partir daqui, todos os passos começam na pasta "A_65-project"*
+***A partir daqui, todos os passos começam na pasta "A_65-project"***
 
-[4] Instalar módulos de bibliotecas auxiliares
+[4] Instalar módulos de **bibliotecas auxiliares**
 
 ```
 cd uddi-naming
