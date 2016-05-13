@@ -27,7 +27,7 @@ public class ReplicationIT extends BaseBrokerIT {
     	client.clearTransports();
     }
     
-    /**
+	/**
 	 * Test normal replication. The Secondary Broker will print a message
 	 * every time it receives a sign of life or a state update from
 	 * the Primary Broker.

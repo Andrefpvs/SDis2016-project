@@ -404,7 +404,7 @@ public class BrokerDomain {
 	 * Must be called if in Replication Mode whenever a "transport" is added
 	 * or modified on the Primary server.
 	 */
-	public void keepStateUpdated(TransportView transport, int failedNumber) { //TODO add message ID behaviour
+	public void keepStateUpdated(TransportView transport, int failedNumber) {
 		if(this.isPrimaryServer) {
 			otherBroker.keepStateUpdated(transport, this.failedNumber);
 		} else {

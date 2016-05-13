@@ -56,10 +56,8 @@ public class CADomain {
 			fis = new FileInputStream(TRANSPORTER2_CERTIFICATE);
 			upaTransporter2Certificate = factory.generateCertificate(fis);
 		} catch (CertificateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -82,7 +80,6 @@ public class CADomain {
 		try {
 			certificateResponse = upaBrokerCertificate.getEncoded();
 		} catch (CertificateEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 				
@@ -98,7 +95,6 @@ public class CADomain {
 		try {
 			certificateResponse = upaTransporter1Certificate.getEncoded();
 		} catch (CertificateEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 				
@@ -114,7 +110,6 @@ public class CADomain {
 		try {
 			certificateResponse = upaTransporter2Certificate.getEncoded();
 		} catch (CertificateEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 				
