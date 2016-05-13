@@ -100,7 +100,7 @@ mvn -Dws.i=2 verify
 [1] Instalar cliente no repositório local da máquina (necessário para replicação)
 ```
 cd broker-ws-cli
-mvn clean install -DskipTests
+mvn clean generate-sources install -DskipTests
 ```
 
 [2] Construir e executar **servidor principal** *UpaBroker*
@@ -111,14 +111,14 @@ mvn clean generate-sources install exec:java -DskipTests
 
 ```
 
-[3] Executar **servidor secundário** *UpaBrokerSub*
+[3] Executar **servidor secundário** *UpaBrokerSub* (quando instruído pelo servidor principal)
 
 ```
 cd broker-ws
 mvn -Dws.sub=Sub -Dws.port=8090 exec:java -DskipTests
 ```
 
-[4] Construir **cliente** e executar testes ("install" inclui o passo "verify")
+[4] Construir **cliente** e executar testes ("install" inclui o passo "verify")  //TODO Reconstruir este passo para demonstração
 
 ```
 cd broker-ws-cli
