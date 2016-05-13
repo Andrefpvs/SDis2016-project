@@ -37,12 +37,6 @@
             <artifactId>uddi-naming</artifactId>
             <version>1.0</version>
         </dependency>
-	<!-- Crypto -->
-        <dependency>
-	    <groupId>pt.upa.a65</groupId>
-    	    <artifactId>crypto</artifactId>
-     	    <version>1.0-SNAPSHOT</version>
-	</dependency>
     </dependencies>
 
     <properties>
