@@ -156,7 +156,7 @@ mvn -Dit.test=ReplicationIT#testUDDISubstitution verify
 
 #### Segurança
 
-Devido a dificuldades, testes de Segurança não foram implementados. Para avaliação, enviamos a estrutura e implementação. Mais detalhes no [relatório](https://github.com/tecnico-distsys/A_65-project/blob/master/doc/A65-report.pdf).
+Devido a dificuldades, testes de Segurança não foram implementados. Para avaliação, enviamos a estrutura e implementação isolados do resto do projeto. Mais detalhes no [relatório](https://github.com/tecnico-distsys/A_65-project/blob/master/doc/A65-report.pdf), na parte da Segurança.
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
