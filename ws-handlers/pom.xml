@@ -25,6 +25,24 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+	<!-- CA WS Client -->
+	<dependency>
+            <groupId>pt.upa.a65</groupId>
+    	    <artifactId>ca-ws-cli</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+	<!-- UDDI Naming -->
+        <dependency>
+            <groupId>pt.ulisboa.tecnico.sdis</groupId>
+            <artifactId>uddi-naming</artifactId>
+            <version>1.0</version>
+        </dependency>
+	<!-- Crypto -->
+        <dependency>
+	    <groupId>pt.upa.a65</groupId>
+    	    <artifactId>crypto</artifactId>
+     	    <version>1.0-SNAPSHOT</version>
+	</dependency>
     </dependencies>
 
     <properties>
