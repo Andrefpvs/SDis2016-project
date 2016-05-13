@@ -22,7 +22,7 @@ Repositório:
 
 **Antes de continuar com os passos seguintes, é importante apagar a base de dados local do JUDDI, caso exista:**
 ```
-shutdown.bat
+shutdown.bat (se necessário)
 > apagar manualmente a pasta "target" e ficheiro "derby.log", gerados pelo JUDDI em execuções anteriores
 ```
 
@@ -116,5 +116,51 @@ mvn -Dws.sub=Sub -Dws.port=8090 exec:java -DskipTests
 cd broker-ws-cli
 mvn verify
 ```
+
 -------------------------------------------------------------------------------
+
+### Demonstração
+#### Replicação
+
+Os testes estão na classe *ReplicationIT* do *broker-ws-cli*, e devem ser corridos individualmente de acordo com as seguintes instruções:
+
+[1] Correr teste `testStateReplication()`.
+    Este teste irá demonstrar o funcionamento normal da replicação, incluindo a impressão para a consola de cada vez que é feita a propagação de alterações e provas-de-vida. Para instigar a propagação de alterações, são usados os métodos `requestTransport`, `viewTransport`, e `clearTransports`.
+```
+> iniciar Broker Primário e Secundário
+cd broker-ws-cli
+mvn -Dit.test=ReplicationIT#testStateReplication verify
+```
+
+[2] Correr teste `testStateReplicationWithFault()`.
+    Este teste irá demonstrar que após o Broker Primário cair, o Broker Secundário irá conter o mesmo estado
+    que o Primário na altura em que caiu. É necessário terminar o Primário manualmente (`sigkill`) quando
+    pedido pelo teste.
+```
+> iniciar Broker Primário e Secundário
+cd broker-ws-cli
+mvn -Dit.test=ReplicationIT#testStateReplicationWithFault verify
+> quando aparecer a mensagem "You now have 15 SECONDS to terminate Primary Broker.", terminar o processo do Broker Primário (CTRL+C)
+```
+
+[3] Correr teste `testUDDISubstitution()`.
+    Este teste irá demonstrar que após o Broker Primário cair, o FrontEnd do Cliente irá obter
+    o *endpoint* do Broker Secundário, procurando no UDDI pelo nome do Primário (único nome conhecido
+    pelo Cliente). É necessário terminar o Primário manualmente (`sigkill`) quando pedido pelo teste.
+```
+> iniciar Broker Primário e Secundário
+cd broker-ws-cli
+mvn -Dit.test=ReplicationIT#testUDDISubstitution verify
+> quando aparecer a mensagem "You now have 20 SECONDS to terminate Primary Broker.", terminar o processo do Broker Primário (CTRL+C)
+```
+
+#### Segurança
+
+Devido a dificuldades, testes de Segurança não foram implementados. Para avaliação, enviamos a estrutura e implementação. Mais detalhes no [relatório](https://github.com/tecnico-distsys/A_65-project/blob/master/doc/A65-report.pdf).
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+Para detalhes sobre implementação, consultar o [relatório do projeto](https://github.com/tecnico-distsys/A_65-project/blob/master/doc/A65-report.pdf).
+
 **FIM**
