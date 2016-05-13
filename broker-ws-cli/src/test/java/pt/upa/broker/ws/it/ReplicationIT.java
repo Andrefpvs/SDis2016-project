@@ -71,7 +71,7 @@ public class ReplicationIT extends BaseBrokerIT {
 		System.out.println("(TEST) Client is connected to " + endpoint);
 		client.ping("Test");
 		Thread.sleep(1000);
-		System.out.println("You now have 20 SECONDS to terminate Primary Broker. "
+		System.out.println("(TEST) You now have 20 SECONDS to terminate Primary Broker. "
 				+ "The test will fail if the Primary isn't terminated now.");
 		Thread.sleep(20000);
 		client.ping("Test"); //this should trigger the UDDI substitution on the Client

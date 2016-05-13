@@ -29,7 +29,6 @@ import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.upa.ca.ws.cli.*;
-import pt.upa.crypt.*;
 
 /**
  *  This SOAPHandler shows how to set/get values from headers in
@@ -139,7 +138,7 @@ public class SecurityHandler implements SOAPHandler<SOAPMessageContext> {
                 
                 byte[] digitalsigncypher = null;
                 try{
-                    digitalsigncypher = makeDigitalSignature(convertedmsg, pk);
+                   // digitalsigncypher = makeDigitalSignature(convertedmsg, pk);
                 }catch(Exception e){
                     System.out.println("Couldn't cypher message content");
                 }
@@ -153,14 +152,14 @@ public class SecurityHandler implements SOAPHandler<SOAPMessageContext> {
                 
                 //NOUNCE
                 //Generate Nounce (byte array)
-                SecureRandomGen generator = new SecureRandomGen();
-		byte[] random = generator.getRandomNumber();
+                //SecureRandomGen generator = new SecureRandomGen();
+	//	byte[] random = generator.getRandomNumber();
                 
                 
                 byte[] nouncecypher = null;
                 
                 try{
-                    nouncecypher = makeDigitalSignature(random, pk);
+                   // nouncecypher = makeDigitalSignature(random, pk);
                 }catch(Exception e){
                     System.out.println("Couldn't cypher nounce");
                 }
@@ -218,7 +217,7 @@ public class SecurityHandler implements SOAPHandler<SOAPMessageContext> {
                 
                 byte[] digitalsigncypher = null;
                 try{
-                    digitalsigncypher = makeDigitalSignature(convertedmsg, pk);
+                   // digitalsigncypher = makeDigitalSignature(convertedmsg, pk);
                 }catch(Exception e){
                     System.out.println("Couldn't cypher message content");
                 }
@@ -232,14 +231,14 @@ public class SecurityHandler implements SOAPHandler<SOAPMessageContext> {
                 
                 //NOUNCE
                 //Generate Nounce (byte array)
-                SecureRandomGen generator = new SecureRandomGen();
-		byte[] random = generator.getRandomNumber();
+               // SecureRandomGen generator = new SecureRandomGen();
+	//	byte[] random = generator.getRandomNumber();
                 
                 
                 byte[] nouncecypher = null;
                 
                 try{
-                    nouncecypher = makeDigitalSignature(random, pk);
+                  //  nouncecypher = makeDigitalSignature(random, pk);
                 }catch(Exception e){
                     System.out.println("Couldn't cypher nounce");
                 }
@@ -296,7 +295,7 @@ public class SecurityHandler implements SOAPHandler<SOAPMessageContext> {
                 
                 byte[] digitalsigncypher = null;
                 try{
-                    digitalsigncypher = makeDigitalSignature(convertedmsg, pk);
+                    //digitalsigncypher = makeDigitalSignature(convertedmsg, pk);
                 }catch(Exception e){
                     System.out.println("Couldn't cypher message content");
                 }
@@ -310,14 +309,14 @@ public class SecurityHandler implements SOAPHandler<SOAPMessageContext> {
                 
                 //NOUNCE
                 //Generate Nounce (byte array)
-                SecureRandomGen generator = new SecureRandomGen();
-		byte[] random = generator.getRandomNumber();
+              //  SecureRandomGen generator = new SecureRandomGen();
+		//byte[] random = generator.getRandomNumber();
                 
                 
                 byte[] nouncecypher = null;
                 
                 try{
-                    nouncecypher = makeDigitalSignature(random, pk);
+                //    nouncecypher = makeDigitalSignature(random, pk);
                 }catch(Exception e){
                     System.out.println("Couldn't cypher nounce");
                 }
