@@ -56,6 +56,9 @@ cd A_65-project
 ```
 cd uddi-naming
 mvn clean install
+cd ..
+cd ws-handlers
+mvn clean install
 ```
 
 
