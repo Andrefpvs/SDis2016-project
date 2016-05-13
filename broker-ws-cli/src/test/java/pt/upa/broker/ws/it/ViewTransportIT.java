@@ -36,7 +36,7 @@ public class ViewTransportIT extends BaseBrokerIT {
 		String jobID = client.requestTransport(CENTRO_CITY1, CENTRO_CITY2, 9);
 		assertNotNull(jobID);
 		System.out.println("(TEST) Giving a state some time to change... (6s max.)");
-		Thread.sleep(6000);  //after this time the state will've almost assuredly changed
+		Thread.sleep(6000);  //after this time the state will have almost assuredly changed
 		TransportView transport = client.viewTransport(jobID);
 		assertNotEquals(TransportStateView.BOOKED, transport.getState());
 	}
@@ -59,7 +59,7 @@ public class ViewTransportIT extends BaseBrokerIT {
 	 *  passar um fim-de-semana a uma cidade no centro do país: 
 	 *	Peço a minha viagem e vejo-a; a minha mãe pede a viagem 
 	 *	dela e quer ver todas as que pedimos até agora;
-	 *	o meu irmao marca depois, vê a dele, e na véspera da viagem
+	 *	o meu irmão marca depois, vê a dele, e na véspera da viagem
 	 *	são revistas todas."
 	 */
 	@Test

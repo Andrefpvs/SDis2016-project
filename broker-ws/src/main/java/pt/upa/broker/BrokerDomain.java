@@ -32,29 +32,28 @@ public class BrokerDomain {
 	private static final String MESSAGE_TO_UNKNOWNS = "Who is this?";
 	private static final String PRIMARY_SERVER_NAME = "UpaBroker";
 	private static final String SECONDARY_SERVER_NAME = "UpaBrokerSub";
-	private static final long PING_INTERVAL_TIME = 3000;
-	
+	private static final long LIFE_SIGN_INTERVAL_TIME = 3000;	
 	
 	private TreeMap<String, TransportView> transports; //String = Transport ID
 	private ArrayList<TransporterClient> transporters;	
 	private String wsname; //Broker Name
 	private int failedNumber = 1; // Number attributed to transporter in FAILED state
-	private ArrayList<String> cities = new ArrayList<String>(); //All regions cities
+	private ArrayList<String> cities = new ArrayList<String>(); //All regions' cities
 	private UDDINaming uddiNaming = null;
 	
 	private boolean processedLifeSign = false;
 	private boolean takingOverPrimary = false;
 	private boolean isPrimaryServer = true;
-	private boolean replicationMode = true; /*if false, Broker will not sync its status
+	private boolean replicationMode = true; /*If false, Broker will not sync its status
 	 											with a Secondary server. Before calling
 	 											keepStateUpdated(), we must always check
-	 											if this is true. */
+	 											if this and "isPrimaryServer" are true. */
 	
 	private Timer lifeSignSender = new Timer();
 	private Timer statusDecider = new Timer();
 
-	private BrokerClient otherBroker = null;
-
+	private BrokerClient otherBroker = null; /*If Primary, this is the Secondary
+											   (and vice-versa)*/
 	
 	public BrokerDomain(String wsname, String uddiURL) throws JAXRException {
 		this.transports = new TreeMap<String, TransportView>();
@@ -73,7 +72,7 @@ public class BrokerDomain {
 				findSecondaryBroker();
 				lifeSignSender.scheduleAtFixedRate(new TimerTask(){
   					public void run() {otherBroker.sendLifeSign();}
-  						}, PING_INTERVAL_TIME, PING_INTERVAL_TIME);
+  						}, LIFE_SIGN_INTERVAL_TIME, LIFE_SIGN_INTERVAL_TIME);
 			} catch (BrokerSecondaryServerNotFoundException e) {
 				System.out.println("Secondary Broker not found. Starting in \"No Replication\" mode");
 				this.replicationMode = false;
@@ -215,8 +214,7 @@ public class BrokerDomain {
 				System.out.println("Secondary Server NOT FOUND!");
 				this.replicationMode = false;
 			}
-		}
-		
+		}		
 		
 		return transport.getId();
 	}
@@ -257,8 +255,7 @@ public class BrokerDomain {
 				System.out.println("Secondary Server NOT FOUND!");
 				this.replicationMode = false;
 			}
-		}
-		
+		}		
 		
 		return transport;
 	}
@@ -287,7 +284,10 @@ public class BrokerDomain {
 				System.out.println("Secondary Server NOT FOUND!");
 				this.replicationMode = false;
 			}
-		}
+		} else if(!this.isPrimaryServer) {
+			System.out.println("Primary Broker cleared all transports. "
+				+ "All transports cleared on Secondary as well. \nUpdated.");
+		}			
 	}
 
 	/*
@@ -390,7 +390,8 @@ public class BrokerDomain {
 				endpoint = uddiNaming.lookup(SECONDARY_SERVER_NAME);
 			} catch (JAXRException e) {
 				this.otherBroker = null;
-				throw new BrokerSecondaryServerNotFoundException("JAXRException " + "caught during lookup");
+				throw new BrokerSecondaryServerNotFoundException("JAXRException " 
+					+ "caught during lookup");
 			}
 		}				
 		
@@ -414,19 +415,29 @@ public class BrokerDomain {
 		}
 	}
 	
+	/**
+	 * A function that when called by the Primary server on
+	 * the Secondary, will let the Secondary know that the
+	 * Primary is still alive.
+	 */
 	public void sendLifeSign() {
 		if(this.isPrimaryServer) return;
 
 		if(!processedLifeSign) {
 			statusDecider.scheduleAtFixedRate(new TimerTask(){
 			      					public void run() {secondaryStatusUpdate();}
-			      					}, PING_INTERVAL_TIME, PING_INTERVAL_TIME);
+			      					}, LIFE_SIGN_INTERVAL_TIME, LIFE_SIGN_INTERVAL_TIME);
 		}
 		processedLifeSign = true;
 		takingOverPrimary = false;
 		System.out.println("Primary Broker sent a sign of life!");
 	}
 	
+	/**
+	 * If the Primary server stops sending signs of life,
+	 * this function prepares the Secondary server to
+	 * take over the Primary's role.
+	 */
 	public void secondaryStatusUpdate() {
 		if(takingOverPrimary) {
 			statusDecider.cancel();
@@ -435,7 +446,6 @@ public class BrokerDomain {
 			String endpoint;
 			try {
 				endpoint = uddiNaming.lookup(this.wsname);
-				//print endpoint?
 				this.isPrimaryServer = true;
 				replicationMode = false;
 				uddiNaming.unbind(this.wsname);
@@ -447,13 +457,14 @@ public class BrokerDomain {
 				e.printStackTrace();
 			}
 			
-		} else takingOverPrimary = true; //if we don't get a new life signal, this will remain true
+		} else takingOverPrimary = true; //if we don't get a new life sign before the next call,
+										 //this will remain true and Secondary will take over
 	}
+	
 	
 	/**
 	 * @deprecated Use sendLifeSign() instead
-	 */
-	
+	 */	
 	public void pingPrimary() {
 		if(this.isPrimaryServer) return;
 		

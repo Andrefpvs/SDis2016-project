@@ -2,6 +2,12 @@ package pt.upa.broker.ws.cli;
 
 import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 
+/**
+ * 
+ * FrontEnd implementation is in this class as well
+ * 
+ */
+
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +83,7 @@ public class BrokerClient implements BrokerPortType{
 			requestContext.put(propName, connectionTimeout);
 		System.out.printf("Set connection timeout to %d milliseconds%n", connectionTimeout);
 
-		int receiveTimeout = 5000;
+		int receiveTimeout = 6000;
 		// The receive timeout property has alternative names
 		// Again, set them all to avoid compability issues
 		final List<String> RECV_TIME_PROPS = new ArrayList<String>();
@@ -115,7 +121,7 @@ public class BrokerClient implements BrokerPortType{
 			requestContext.put(propName, connectionTimeout);
 		System.out.printf("Set connection timeout to %d milliseconds%n", connectionTimeout);
 
-		int receiveTimeout = 5000;
+		int receiveTimeout = 6000;
 		// The receive timeout property has alternative names
 		// Again, set them all to avoid compability issues
 		final List<String> RECV_TIME_PROPS = new ArrayList<String>();
@@ -187,7 +193,7 @@ public class BrokerClient implements BrokerPortType{
 			if (cause != null && cause instanceof SocketTimeoutException) {
 				// System.out.println("The cause was a timeout exception: " +
 				// cause);
-				System.out.println("Main Broker Server was down. Cause: "  + cause);
+				System.out.println("(CLIENT) Main Broker Server was down. Cause: "  + cause);
 				this.setVerbose(true);
 				try {
 					Thread.sleep(15000);
@@ -201,7 +207,7 @@ public class BrokerClient implements BrokerPortType{
 				}
 				createStub();
 				
-				System.out.println("Resending request...");
+				System.out.println("(CLIENT) Resending request...");
 	            result = port.ping(name);
 			}
 		}
@@ -224,7 +230,7 @@ public class BrokerClient implements BrokerPortType{
 			if (cause != null && cause instanceof SocketTimeoutException) {
 				// System.out.println("The cause was a timeout exception: " +
 				// cause);
-				System.out.println("Main Broker Server was down. Cause: "  + cause);
+				System.out.println("(CLIENT) Main Broker Server was down. Cause: "  + cause);
 				this.setVerbose(true);
 				try {
 					Thread.sleep(15000);
@@ -238,7 +244,7 @@ public class BrokerClient implements BrokerPortType{
 				}
 				createStub();
 				
-				System.out.println("Resending request...");
+				System.out.println("(CLIENT) Resending request...");
 				result = port.requestTransport(origin, destination, price);
 			}
 		}
@@ -259,7 +265,7 @@ public class BrokerClient implements BrokerPortType{
 			if (cause != null && cause instanceof SocketTimeoutException) {
 				// System.out.println("The cause was a timeout exception: " +
 				// cause);
-				System.out.println("Main Broker Server was down. Cause: "  + cause);
+				System.out.println("(CLIENT) Main Broker Server was down. Cause: "  + cause);
 				this.setVerbose(true);
 				try {
 					Thread.sleep(15000);
@@ -273,7 +279,7 @@ public class BrokerClient implements BrokerPortType{
 				}
 				createStub();
 				
-				System.out.println("Resending request...");
+				System.out.println("(CLIENT) Resending request...");
 				result = port.viewTransport(id);
 			}
 		}
@@ -294,7 +300,7 @@ public class BrokerClient implements BrokerPortType{
 			if (cause != null && cause instanceof SocketTimeoutException) {
 				// System.out.println("The cause was a timeout exception: " +
 				// cause);
-				System.out.println("Main Broker Server was down. Cause: "  + cause);
+				System.out.println("(CLIENT) Main Broker Server was down. Cause: "  + cause);
 				this.setVerbose(true);
 				try {
 					Thread.sleep(15000);
@@ -308,7 +314,7 @@ public class BrokerClient implements BrokerPortType{
 				}
 				createStub();
 				
-				System.out.println("Resending request...");
+				System.out.println("(CLIENT) Resending request...");
 				result = port.listTransports();
 			}
 		}
@@ -328,7 +334,7 @@ public class BrokerClient implements BrokerPortType{
 			if (cause != null && cause instanceof SocketTimeoutException) {
 				// System.out.println("The cause was a timeout exception: " +
 				// cause);
-				System.out.println("Main Broker Server was down. Cause: "  + cause);
+				System.out.println("(CLIENT) Main Broker Server was down. Cause: "  + cause);
 				this.setVerbose(true);
 				try {
 					Thread.sleep(15000);
@@ -342,7 +348,7 @@ public class BrokerClient implements BrokerPortType{
 				}
 				createStub();
 				
-				System.out.println("Resending request...");
+				System.out.println("(CLIENT) Resending request...");
 				port.clearTransports();
 			}
 		}
