@@ -2,7 +2,6 @@ package pt.upa.ca.ws.cli;
 
 import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.ws.BindingProvider;
@@ -107,5 +106,20 @@ public class CAClient implements CAPortType {
 	@Override
 	public String ping(String name) {
 		return port.ping(name);
+	}
+	
+	@Override
+	public byte[] requestBrokerCertificate() {
+		return port.requestBrokerCertificate();
+	}
+
+	@Override
+	public byte[] requestTransporter1Certificate() {
+		return port.requestTransporter1Certificate();
+	}
+
+	@Override
+	public byte[] requestTransporter2Certificate() {
+		return port.requestTransporter2Certificate();
 	}
 }

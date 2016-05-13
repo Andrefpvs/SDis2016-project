@@ -1,6 +1,5 @@
 package pt.upa.ca.ws;
 
-import java.util.List;
 import javax.jws.WebService;
 import javax.xml.registry.JAXRException;
 
@@ -39,5 +38,21 @@ public class CAPort implements CAPortType {
 	@Override
 	public String ping(String name) {
 		return domain.ping(name);
+	}
+
+	@Override
+	public byte[] requestBrokerCertificate() {
+		return domain.requestBrokerCertificate();
+	}
+
+	@Override
+	public byte[] requestTransporter1Certificate() {
+		return domain.requestTransporter1Certificate();
+	}
+
+	@Override
+	public byte[] requestTransporter2Certificate() {
+		return domain.requestTransporter2Certificate();
 	}	
+	
 }

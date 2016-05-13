@@ -68,6 +68,51 @@
 			
 			
 			
+            <xs:element name="requestBrokerCertificate">
+            	<xs:complexType>
+            		<xs:sequence>
+
+            		</xs:sequence>
+            	</xs:complexType>
+            </xs:element>
+            <xs:element name="requestBrokerCertificateResponse">
+            	<xs:complexType>
+            		<xs:sequence>
+
+                        <xs:element name="out" type="xs:hexBinary"></xs:element>
+                    </xs:sequence>
+            	</xs:complexType>
+            </xs:element>
+            <xs:element name="requestTransporter1Certificate">
+            	<xs:complexType>
+            		<xs:sequence>
+
+            		</xs:sequence>
+            	</xs:complexType>
+            </xs:element>
+            <xs:element name="requestTransporter1CertificateResponse">
+            	<xs:complexType>
+            		<xs:sequence>
+
+            			<xs:element name="out" type="xs:hexBinary"></xs:element>
+            		</xs:sequence>
+            	</xs:complexType>
+            </xs:element>
+            <xs:element name="requestTransporter2Certificate">
+            	<xs:complexType>
+            		<xs:sequence>
+
+            		</xs:sequence>
+            	</xs:complexType>
+            </xs:element>
+            <xs:element name="requestTransporter2CertificateResponse">
+            	<xs:complexType>
+            		<xs:sequence>
+
+            			<xs:element name="out" type="xs:hexBinary"></xs:element>
+            		</xs:sequence>
+            	</xs:complexType>
+            </xs:element>
         </xs:schema>
     </types>
 
@@ -87,7 +132,25 @@
 
     <!-- Port Type (Interface) -->	
 
-	<portType name="CAPortType">
+    <message name="requestBrokerCertificateRequest">
+    	<part name="parameters" element="tns:requestBrokerCertificate"></part>
+    </message>
+    <message name="requestBrokerCertificateResponse">
+    	<part name="parameters" element="tns:requestBrokerCertificateResponse"></part>
+    </message>
+    <message name="requestTransporter1CertificateRequest">
+    	<part name="parameters" element="tns:requestTransporter1Certificate"></part>
+    </message>
+    <message name="requestTransporter1CertificateResponse">
+    	<part name="parameters" element="tns:requestTransporter1CertificateResponse"></part>
+    </message>
+    <message name="requestTransporter2CertificateRequest">
+    	<part name="parameters" element="tns:requestTransporter2Certificate"></part>
+    </message>
+    <message name="requestTransporter2CertificateResponse">
+    	<part name="parameters" element="tns:requestTransporter2CertificateResponse"></part>
+    </message>
+    <portType name="CAPortType">
 
         <operation name="ping">
             <input wsam:Action="http://ws.ca.upa.pt/CAPort/pingRequest"
@@ -116,7 +179,19 @@
         </operation>
 		-->
 
-	</portType>
+		<operation name="requestBrokerCertificate">
+			<input message="tns:requestBrokerCertificateRequest"></input>
+			<output message="tns:requestBrokerCertificateResponse"></output>
+		</operation>
+		<operation name="requestTransporter1Certificate">
+			<input message="tns:requestTransporter1CertificateRequest"></input>
+			<output message="tns:requestTransporter1CertificateResponse"></output>
+		</operation>
+		<operation name="requestTransporter2Certificate">
+			<input message="tns:requestTransporter2CertificateRequest"></input>
+			<output message="tns:requestTransporter2CertificateResponse"></output>
+		</operation>
+    </portType>
 	
     <!-- SOAP/HTTP Binding -->
     <binding name="CAPortSoapHttpBinding" type="tns:CAPortType">
@@ -124,6 +199,36 @@
             style="document" />
 
         <operation name="ping">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+        
+        <operation name="requestBrokerCertificate">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+        
+        <operation name="requestTransporter1Certificate">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+        
+        <operation name="requestTransporter2Certificate">
             <soap:operation soapAction="" />
             <input>
                 <soap:body use="literal" />
