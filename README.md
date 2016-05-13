@@ -13,7 +13,7 @@ Repositório:
 
 -------------------------------------------------------------------------------
 
-## Instruções para instalação 
+## Instruções de instalação da segunda entrega (para primeira entrega, ver [README da release SD_R1](https://github.com/tecnico-distsys/A_65-project/blob/66ccda97bae4877c0db212d7a9688bf565f92e23/README.md))
 
 
 ### Ambiente
@@ -71,7 +71,7 @@ cd transporter-ws
 mvn clean generate-sources install exec:java
 ```
 
-[2] Construir **cliente** de *UpaTransporter1* e executar testes ("install" inclui o passo "verify")
+[2] Construir **cliente** de *UpaTransporter1* e executar testes IT ("install" inclui o passo "verify")
 
 ```
 cd transporter-ws-cli
@@ -85,19 +85,11 @@ cd transporter-ws
 mvn -Dws.i=2 exec:java
 ```
 
-[4] Construir **cliente** de *UpaTransporter2* e executar testes
-
-```
-cd transporter-ws-cli
-mvn -Dws.i=2 verify
-```
-
-
 -------------------------------------------------------------------------------
 
 ### Serviço BROKER (Os passos seguintes devem ser em terminais separados)
 
-[1] Instalar cliente no repositório local da máquina (necessário para replicação)
+[1] Instalar **cliente** no repositório local da máquina (necessário para replicação)
 ```
 cd broker-ws-cli
 mvn clean generate-sources install -DskipTests
@@ -118,11 +110,11 @@ cd broker-ws
 mvn -Dws.sub=Sub -Dws.port=8090 exec:java -DskipTests
 ```
 
-[4] Construir **cliente** e executar testes ("install" inclui o passo "verify")  //TODO Reconstruir este passo para demonstração
+[4] Executar testes IT do **cliente** (neste passo, ignorar o resultado dos testes de *ReplicationIT*)
 
 ```
 cd broker-ws-cli
-mvn clean generate-sources install
+mvn verify
 ```
 -------------------------------------------------------------------------------
 **FIM**
