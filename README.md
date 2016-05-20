@@ -57,6 +57,12 @@ cd A_65-project
 cd uddi-naming
 mvn clean install
 cd ..
+cd ca-ws-cli
+mvn clean install
+cd ..
+cd ca-ws
+mvn clean install
+cd ..
 cd ws-handlers
 mvn clean install
 ```
